@@ -1,0 +1,51 @@
+---
+---
+
+@import 'main';
+
+/* append your custom style below */
+
+
+/* Stop side icon hover animation */
+#sidebar #avatar img:hover {
+	transform: none;
+}
+
+/* Make image bigger and more center */
+#sidebar #avatar img {
+    width: 70%;
+    height: auto;
+    margin: auto;
+    display: block;
+    transform: translateY(+10%);
+}
+
+/* Make image container bigger */
+#sidebar #avatar {
+    width: 12rem;
+    height: 12rem;
+    background: white;
+
+}
+
+/* Hide "Recently Updated." and "Trending Tags" on post right sidebar */
+#panel-wrapper .access {
+	display: none;
+}
+
+/* Hide "OLDER." and "NEWER" buttons in footer of posts */
+.btn.btn-outline-primary.disabled {
+	display: none;
+}
+
+div.utterances {
+    margin: 0;
+}
+
+/* Hide left sidebar links */
+.nav-link[href*="/tags"] {
+    display: none !important;
+}
+.nav-link[href*="/archives"] {
+    display: none !important;
+}
