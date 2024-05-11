@@ -1,0 +1,23 @@
+media:
+  input: assets/img
+  output: assets/img
+content:
+  - name: posts
+    label: Posts
+    path: _posts
+    type: collection
+    # fields: [title, date]
+    fields:
+      - name: published
+        label: Published
+        type: boolean
+        default: true
+      - name: date
+        label: Date
+        type: date
+      - name: title
+        label: Title
+        type: string
+      - name: body
+        label: Body
+        type: rich-text
