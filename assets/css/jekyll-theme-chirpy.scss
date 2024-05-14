@@ -33,19 +33,21 @@
 	display: none;
 }
 
+/* Hide further reading/related posts */
+// #related-posts {
+// 	display: none;
+// }
+
 /* Hide "OLDER." and "NEWER" buttons in footer of posts */
-.btn.btn-outline-primary.disabled {
-	display: none;
+.post-navigation {
+	display: none !important;
 }
 
-div.utterances {
-    margin: 0;
-}
+// div.utterances {
+//     margin: 0;
+// }
 
-/* Hide left sidebar links */
-.nav-link[href*="/tags"] {
-    display: none !important;
-}
-.nav-link[href*="/archives"] {
-    display: none !important;
+/* Stop the TOC auto collapsing */
+.is-collapsed {
+    max-height: none !important;
 }

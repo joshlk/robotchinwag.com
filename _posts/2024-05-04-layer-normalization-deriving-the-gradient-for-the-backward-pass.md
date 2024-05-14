@@ -1,27 +1,23 @@
 ---
-title: "Part 3: the Gradients of Layer Normalization"
+title: "Layer Normalization, Deriving the Gradient for the Backward Pass"
 description: >-
-  Introduction on Tensor calculus and backpropagation
+  Deriving the gradient for the backward pass for layer normalization using tensor calculus
 #author: Josh Levy-Kramer
 date: 2024-05-04 12:01:00 +0000
 categories: [AI, Tensor Calculus]
-tags: [ai, deep learning, maths, tensor calculus, automatic differentiation]  # TAG names should always be lowercase
-pin: true
+tags: [ai, deep learning, maths, tensor calculus, index notation, automatic differentiation]  # TAG names should always be lowercase
+pin: false
 math: true
 ---
 
-# Part 3: the Gradients of Layer Normalization
+* [Into: series intro and more examples](/posts/gradients-in-deep-learning/)
+* [Part 1: a brief tour of backpropagation and multi-variable calculus](/posts/backpropagation-and-multivariable-calculus/)
+* [Part 2: The Tensor Calculus You Need for Deep Learning](/posts/the-tensor-calculus-you-need-for-deep-learning/)
+* [Part 3: the Gradients of Layer Normalization](/posts/layer-normalization-deriving-the-gradient-for-the-backward-pass/)
 
-* [Into: series intro and more examples](/posts/tensor-calculus-in-deep-learning-series/)
-* [Part 1: a brief tour of backpropagation and multi-variable calculus](/posts/part-1-backpropagation-and-multivariable-calculus/)
-* [Part 2: Tensors and Tensor Calculus Using Index Notation](/posts/part-2-tensors-index-notation-and-tensor-calculus/)
-* [Part 3: the Gradients of Layer Normalization](/posts/part-3-layer-normalization/)
+This article forms part of a [series](/posts/gradients-in-deep-learning/) on differentiating and calculating gradients in deep learning. In this last section we tackle a more complicated function: layer normalisaiton. 
 
-This article forms part of a [series](/posts/tensor-calculus-in-deep-learning-series/) on differentiating and calculating gradients in deep learning. In this last section we tackle a more complicated function: layer normalisaiton. 
-
-## Example: layer normalization
-
-This example is quite long and involved but combines the different concepts presented in the article series. If you have not done so, be sure to become familiar with the [previous examples](/posts/part-2-tensors-index-notation-and-tensor-calculus/#example-element-wise-functions) first.
+This example is quite long and involved but combines the different concepts presented in the article series. If you have not done so, be sure to become familiar with the [previous examples](/posts/the-tensor-calculus-you-need-for-deep-learning/#example-element-wise-functions) first.
 
 PyTorch defines the layer normalization operation for an input matrix $X$, with shape batch size $(B)$ by hidden size $(H)$, as:
 
@@ -31,7 +27,7 @@ $$
 
 Where the mean $\mathrm{E}[x]$ and variance $\operatorname{Var}[x]$ are calculated for each sample in a batch, and $\gamma$ and $\beta$ are learnable vector weights with lengths equal to the hidden size. $\epsilon$ is a constant usually equal to $1 \mathrm{e}-05$.
 
-[As shown previously](/posts/part-2-tensors-index-notation-and-tensor-calculus/#example-layer-normalisation-using-index-notation), we can represent this using index notation:
+[As shown previously](/posts/the-tensor-calculus-you-need-for-deep-learning/#example-layer-normalisation-using-index-notation), we can represent this using index notation:
 $$
 \begin{aligned}
 m_{b} & =\frac{1}{H} \mathbf{1}_{h} x_{b h} \\
@@ -56,7 +52,7 @@ The tensor functions above have the following dependency graph:
 
 ![](https://cdn.mathpix.com/cropped/2024_05_07_c7c3c439079236dbfba7g-16.jpg?height=724&width=417&top_left_y=1107&top_left_x=190)
 
-### Gradient of weights
+## Gradient of weights
 
 Let's start with the easier gradients $\gamma$ and $\beta$:
 
@@ -76,13 +72,13 @@ $$
 \end{aligned}
 $$
 
-### The gradient of input $X$
+## The gradient of input $X$
 
 Directly calculating the derivative of $y_{b h}$ with respect to $x_{p q}$ is quite complex and is an order-4 tensor. However, we don't need to construct this tensor fully since we can backpropagate the loss after each intermediate tensor function, simplifying the process. The backpropagated gradient is simpler because the loss is a scalar, meaning the gradient is, at most, an order-2 tensor.
 
 To accomplish this, we'll start at the end of the dependency graph and calculate the Jacobian tensor at each intermediate stage, followed by calculating the backpropagated gradient. The goal is to obtain an expression of $\partial l / \partial x_{p q}$ in terms of $\partial l / \partial y_{p q}$.
 
-### Gradient of $\sigma$
+## Gradient of $\sigma$
 
 The derivative of $y_{b h}$ with respect to $\sigma_{p}$:
 
@@ -103,7 +99,7 @@ $$
 \end{aligned}
 $$
 
-### Gradient of $v$
+## Gradient of $v$
 
 The derivative of $\sigma_{b}$ with respect to $v_{p}$:
 
@@ -135,7 +131,7 @@ $$
 \end{aligned}
 $$
 
-### Gradient of $\mu$
+## Gradient of $\mu$
 
 The function $\mu_{b h}$ is consumed by two functions, $v_{b}$ and $y_{b h}$, therefore we need to differentiate both functions by $\mu_{b h}$. First, the derivative of $v_{b}$ with respect to $\mu_{p q}$:
 
@@ -166,7 +162,7 @@ $$
 \end{aligned}
 $$
 
-### Gradient of $m$
+## Gradient of $m$
 
 The derivative with respect to $m_{p}$:
 
@@ -213,7 +209,7 @@ $$
 \frac{\partial l}{\partial m_{p}}=-\frac{\partial l}{\partial y_{p h}} \frac{\gamma_{h}}{\sigma_{p}}
 $$
 
-### Gradient of $x$
+## Gradient of $x$
 
 And finally, we move onto $x_{b h}$. Two functions, $m_{b}$ and $\mu_{b h}$, consume $x_{b h}$ and so we need to consider both. First, the derivative of $m_{b}$ with respect to $x_{p q}$:
 
@@ -252,7 +248,7 @@ $$
 \end{aligned}
 $$
 
-### Conclusion
+## Conclusion
 
 Bringing the results together:
 
@@ -266,4 +262,4 @@ $$
 
 ## Next
 
-This concludes the series of using tensor calclus in deep learning. Further examples can be found on the [intro page](/posts/tensor-calculus-in-deep-learning-series/).
+This concludes the series of using tensor calclus in deep learning. Further examples can be found on the [intro page](/posts/gradients-in-deep-learning/).

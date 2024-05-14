@@ -1,23 +1,21 @@
 ---
-title: "Part 1: backpropagation and multivariable calculus"
+title: "Backpropagation and Multivariable Calculus"
 description: >-
-  Introduction on Tensor calculus and backpropagation
+  A quick intro on backpropagation and multivariable calculus for deep learning
 #author: Josh Levy-Kramer
 date: 2024-05-02 12:01:00 +0000
 categories: [AI, Tensor Calculus]
-tags: [ai, deep learning, maths, tensor calculus, automatic differentiation]  # TAG names should always be lowercase
-pin: true
+tags: [ai, deep learning, maths, tensor calculus, index notation, automatic differentiation]  # TAG names should always be lowercase
+pin: false
 math: true
 ---
 
-# Part 1: backpropagation and multivariable calculus
+* [Into: series intro and more examples](/posts/gradients-in-deep-learning/)
+* [Part 1: a brief tour of backpropagation and multi-variable calculus](/posts/backpropagation-and-multivariable-calculus/)
+* [Part 2: The Tensor Calculus You Need for Deep Learning](/posts/the-tensor-calculus-you-need-for-deep-learning/)
+* [Part 3: the Gradients of Layer Normalization](/posts/layer-normalization-deriving-the-gradient-for-the-backward-pass/)
 
-* [Into: series intro and more examples](/posts/tensor-calculus-in-deep-learning-series/)
-* [Part 1: a brief tour of backpropagation and multi-variable calculus](/posts/part-1-backpropagation-and-multivariable-calculus/)
-* [Part 2: Tensors and Tensor Calculus Using Index Notation](/posts/part-2-tensors-index-notation-and-tensor-calculus/)
-* [Part 3: the Gradients of Layer Normalization](/posts/part-3-layer-normalization/)
-
-This article forms part of a [series](/posts/tensor-calculus-in-deep-learning-series/) of articles on how to derive gradients and the "backwards" function for functions in deep learning. This page offer a concise overview of the necessary background in multivariable calculus and backpropagation. For a more in-depth description, refer to the excellent article [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/). This series is a spiritual sequel to that article.
+This article forms part of a [series](/posts/gradients-in-deep-learning/) of articles on how to derive gradients and the "backwards" function for functions in deep learning. This page offer a concise overview of the necessary background in multivariable calculus and backpropagation. For a more in-depth description, refer to the excellent article [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/). This series is a spiritual sequel to that article.
 
 ## Backpropagation
 
@@ -111,7 +109,7 @@ $$
 
 If the chain rule we first introduced can be applied to functions that use any data structure, why do we need vector, matrix or tensor calculus? As we have seen, using matrices can significantly streamline the algebra involved.
 
-It seems logical to discuss matrix functions next; however, since the derivative of one matrix with respect to another is a tensor, we must first introduce tensors to proceed further. Following the examples, the next section will explore the application of multivariable calculus to backpropagation, and then [Part 2 introduce tensors and tensor calculus](posts/part-2-tensors-index-notation-and-tensor-calculus/).
+It seems logical to discuss matrix functions next; however, since the derivative of one matrix with respect to another is a tensor, we must first introduce tensors to proceed further. Following the examples, the next section will explore the application of multivariable calculus to backpropagation, and then [Part 2 introduce tensors and tensor calculus](/posts/the-tensor-calculus-you-need-for-deep-learning/).
 
 ### Example: sum
 
@@ -206,4 +204,4 @@ Again, the backward graph is many sub-graphs which map the inputs to every outpu
 
 ## Next
 
-We have done a quick tour of multivarible calculus and backpropigation. Next [Part 2 introducing tensors and tensor calculus](posts/part-2-tensors-index-notation-and-tensor-calculus/).
+We have done a quick tour of multivarible calculus and backpropigation. Next [Part 2 introducing tensors and tensor calculus](/posts/the-tensor-calculus-you-need-for-deep-learning/).

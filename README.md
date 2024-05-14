@@ -7,7 +7,7 @@
 ## Dev setup
 
 Install inc Jekyll instructions (https://jekyllrb.com/docs/installation/macos/))
-```
+```bash
 brew install chruby ruby-install xz
 echo "source $(brew --prefix)/opt/chruby/share/chruby/chruby.sh" >> ~/.zshrc
 source ~/.zshrc
@@ -19,10 +19,12 @@ gem install jekyll
 ```
 
 Dev, cd to dir:
-```
+```bash
 chruby 3.1.3
 bundle exec jekyll s
 ```
+
+Use [this guide]([img_path](https://github.com/cotes2020/jekyll-theme-chirpy/wiki/Upgrade-Guide#upgrade-from-starter)) update the theme version.
 
 ## Modifications to theme
 
