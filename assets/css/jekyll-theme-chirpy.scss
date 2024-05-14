@@ -51,3 +51,8 @@
 .is-collapsed {
     max-height: none !important;
 }
+
+/* Remove tags from tabs (cant remove page as some pages link to it) */
+li.nav-item:nth-child(5) {
+    display: none;
+}
