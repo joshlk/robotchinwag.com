@@ -26,6 +26,12 @@ bundle exec jekyll s
 
 Use [this guide]([img_path](https://github.com/cotes2020/jekyll-theme-chirpy/wiki/Upgrade-Guide#upgrade-from-starter)) update the theme version.
 
+To update the template file:
+```bash
+git remote add template git@github.com:cotes2020/chirpy-starter.git
+git merge template/master --squash
+```
+
 ## Modifications to theme
 
 You can make modifications to the site by copying files from the [themes repo](https://github.com/cotes2020/jekyll-theme-chirpy) and modifying them.
