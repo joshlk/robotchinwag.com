@@ -4,20 +4,25 @@ description: >-
   Deriving the gradient for the backward pass using tensor calculus and index notation
 #author: Josh Levy-Kramer
 date: 2024-05-03 12:01:00 +0000
-categories: [AI, Tensor Calculus]
-tags: [ai, deep learning, maths, tensor calculus, index notation, automatic differentiation]  # TAG names should always be lowercase
+categories:
+  - AI
+  - Gradients for Backpropagation
+tags:
+  - ai
+  - deep learning
+  - maths
+  - backpropagation
+  - tensor calculus
+  - index notation
 pin: false
 math: true
 ---
 
-* [Into: series intro and more examples](/posts/gradients-in-deep-learning/)
-* [Part 1: a brief tour of backpropagation and multi-variable calculus](/posts/backpropagation-and-multivariable-calculus/)
-* [Part 2: The Tensor Calculus You Need for Deep Learning](/posts/the-tensor-calculus-you-need-for-deep-learning/)
-* [Part 3: the Gradients of Layer Normalization](/posts/layer-normalization-deriving-the-gradient-for-the-backward-pass/)
+When learning deep learning theory, I was incredibly dissatisfied with how authors explained how to derive gradients for backpropagation. They would mostly focus on vectors (and rarely matrices), but in deep learning we use tensors everywhere! In part, this is probably due to the fact that working with tensors mathematically isn't easy and requires learning a whole bunch of background that most practitioners don't have. This post is a spiritual successor to the excellent article [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/) but for functions that work with tensors.
 
-This article forms part of a [series](/posts/gradients-in-deep-learning/) on differentiating and calculating gradients in deep learning. [Part 1](/posts/backpropagation-and-multivariable-calculus/) introduced backpropagation and multivariable calculus, which sets up some of the ideas used in this article. Here, we get to the meat of the theory: tensors and tensor calculus using index notation.
+In this post, I introduce a complete and consistent framework for deriving gradients for backpropagation using tensor calculus. The [first section](#tensors) describes tensors (the type we use in deep learning) and introduces [index notation](#index-notation), a mathematical framework for working with them. Next is [tensor calculus](#tensor-calculus). Then I show [some examples](#example-element-wise-functions) of how to apply the framework.
 
-Note that the index notation explained here has been modified so its more appropriate for deep learning and deviates from other sources. For example, I allow dummy indices to be used more than twice in an expression, as this frequently occurs in deep learning. [Some examples](#example-element-wise-functions) of using tensor calculus are shown in the last sections of this page.
+This article forms part of a [series](/posts/gradients-for-backpropagation/) on differentiating and calculating gradients in deep learning. [Part 1](/posts/backpropagation-and-multivariable-calculus/) introduced backpropagation and multivariable calculus, which sets up some of the ideas used in this article. Here, we get to the meat of the theory: tensors and tensor calculus using index notation.
 
 ## Tensors
 
@@ -328,9 +333,9 @@ We now have a way of representing order-N tensors using a convenient notation. I
 
 Often, instead of referring to $a_{i j}$ as the components of an order-2 tensor, we will simply refer to $a_{i j}$ as the tensor. However, it should always be remembered that $a_{i j}$ are components and not the data structure itself.
 
-### Matrix expressions in index notation
+### Matrix expressions using index notation
 
-Here are some common matrix operations in index notation.
+Here are some common matrix operations expressed using index notation.
 
 | Operation | Matrix notation | Index notation |
 | :---: | :---: | :---: |

@@ -4,20 +4,21 @@ description: >-
   Deriving the gradient for the backward pass for layer normalization using tensor calculus
 #author: Josh Levy-Kramer
 date: 2024-05-04 12:01:00 +0000
-categories: [AI, Tensor Calculus]
-tags: [ai, deep learning, maths, tensor calculus, index notation, automatic differentiation]  # TAG names should always be lowercase
+categories:
+  - AI
+  - Gradients for Backpropagation
+tags:
+  - ai
+  - deep learning
+  - maths
+  - backpropagation
+  - tensor calculus
+  - index notation
 pin: false
 math: true
 ---
 
-* [Into: series intro and more examples](/posts/gradients-in-deep-learning/)
-* [Part 1: a brief tour of backpropagation and multi-variable calculus](/posts/backpropagation-and-multivariable-calculus/)
-* [Part 2: The Tensor Calculus You Need for Deep Learning](/posts/the-tensor-calculus-you-need-for-deep-learning/)
-* [Part 3: the Gradients of Layer Normalization](/posts/layer-normalization-deriving-the-gradient-for-the-backward-pass/)
-
-This article forms part of a [series](/posts/gradients-in-deep-learning/) on differentiating and calculating gradients in deep learning. In this last section we tackle a more complicated function: layer normalisaiton. 
-
-This example is quite long and involved but combines the different concepts presented in the article series. If you have not done so, be sure to become familiar with the [previous examples](/posts/the-tensor-calculus-you-need-for-deep-learning/#example-element-wise-functions) first.
+This post explains how to calculate the gradients of layer normalisation used for backpropagation using tensor calculus and index notation. It is part of a [series](/posts/gradients-for-backpropagation/) on differentiating and calculating gradients in deep learning. This example is quite long and involved but combines the different concepts presented in the article series. If you have not done so, be sure to become familiar with the [previous examples](/posts/the-tensor-calculus-you-need-for-deep-learning/#example-element-wise-functions) first.
 
 PyTorch defines the layer normalization operation for an input matrix $X$, with shape batch size $(B)$ by hidden size $(H)$, as:
 
@@ -262,4 +263,4 @@ $$
 
 ## Next
 
-This concludes the series of using tensor calclus in deep learning. Further examples can be found on the [intro page](/posts/gradients-in-deep-learning/).
+Further examples of calculating gradients using tensor calculus and index notation can be found on the [intro page](/posts/gradients-for-backpropagation/).

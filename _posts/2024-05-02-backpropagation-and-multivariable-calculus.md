@@ -4,18 +4,21 @@ description: >-
   A quick intro on backpropagation and multivariable calculus for deep learning
 #author: Josh Levy-Kramer
 date: 2024-05-02 12:01:00 +0000
-categories: [AI, Tensor Calculus]
-tags: [ai, deep learning, maths, tensor calculus, index notation, automatic differentiation]  # TAG names should always be lowercase
+categories:
+  - AI
+  - Gradients for Backpropagation
+tags:
+  - ai
+  - deep learning
+  - maths
+  - backpropagation
+  - tensor calculus
+  - index notation
 pin: false
 math: true
 ---
 
-* [Into: series intro and more examples](/posts/gradients-in-deep-learning/)
-* [Part 1: a brief tour of backpropagation and multi-variable calculus](/posts/backpropagation-and-multivariable-calculus/)
-* [Part 2: The Tensor Calculus You Need for Deep Learning](/posts/the-tensor-calculus-you-need-for-deep-learning/)
-* [Part 3: the Gradients of Layer Normalization](/posts/layer-normalization-deriving-the-gradient-for-the-backward-pass/)
-
-This article forms part of a [series](/posts/gradients-in-deep-learning/) of articles on how to derive gradients and the "backwards" function for functions in deep learning. This page offer a concise overview of the necessary background in multivariable calculus and backpropagation. For a more in-depth description, refer to the excellent article [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/). This series is a spiritual sequel to that article.
+This post offers a concise overview of multivariable calculus and backpropagation to help you derive the gradients necessary for backpropigation in deep learning. This is a whistle-stop tour. For a more in-depth description, refer to the excellent article [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/). The [next post](/posts/the-tensor-calculus-you-need-for-deep-learning/) demonstrates how to combine these techniques with tensor calculus to derive gradients for any tensor function.
 
 ## Backpropagation
 

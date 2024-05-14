@@ -3,6 +3,7 @@
 <!-- * Website CMS/editor: https://app.pagescms.org/joshlk/robotchinwag.com -->
 * Analytics at: https://robotchinwag.goatcounter.com/
 * Comments stored using [utteranc](https://utteranc.es/) at repo: https://github.com/joshlk/robotchinwag_comments
+* Use [Typora](https://typora.io/) for editing markdown and VSCode otherwise
 
 ## Dev setup
 
@@ -38,4 +39,4 @@ You can make modifications to the site by copying files from the [themes repo](h
 
 ## Licence
 
-The theme is [MIT licensed](/LICENSE). The blog contents are copyrighted by Josh Levy-Kramer. All rights are reserved.
+The theme is [MIT licensed]([/LICENSE](https://github.com/cotes2020/jekyll-theme-chirpy/blob/master/LICENSE). The blog contents are copyrighted by Josh Levy-Kramer. All rights are reserved.
