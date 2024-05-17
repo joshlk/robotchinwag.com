@@ -569,7 +569,7 @@ $$
 
 Note that we have to transpose the matrix $A$ so the indices of the two expressions resemble a matrix multiplication.
 
-### Gradient of A
+### Gradient of $A$
 
 First, obtain the derivative with respect to $A$:
 
