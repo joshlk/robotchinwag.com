@@ -22,9 +22,9 @@ This post offers a concise overview of multivariable calculus and backpropagatio
 
 ## Backpropagation
 
-In deep learning, when training using batches of data, the model's weights are adjusted based on the calculated loss $l$. To be able to update the weights we first need to calculate the gradient of the loss $l$ with respect to all weights of the model, which tells us how to adjust the weights to reduce the loss for the current batch of data. Auto-differentiation or backpropagation is the most popular algorithm to calculate such gradients.
+In deep learning, when training using batches of data, the model's weights are adjusted based on the calculated loss $l$. To be able to update the weights we first need to calculate the gradient of the loss $l$ with respect to all weights of the model, which tells us how to adjust the weights to reduce the loss for the current batch of data. Auto-differentiation or backpropagation is the most popular algorithm for calculating such gradients.
 
-Taking PyTorch as an example, one would execute the `backward()` function on the loss to determine the gradients relative to variables. PyTorch accomplishes this by tracking each operation (forward function) contributing to the loss calculation. Every forward function has a corresponding backward function, and these backward functions are run in reverse order to the forward functions to compute the gradients.
+Taking PyTorch as an example, one would execute the [`backward()`](https://pytorch.org/docs/stable/generated/torch.Tensor.backward.html) function on the loss to determine the gradients relative to variables. PyTorch accomplishes this by tracking each operation (forward function) that contributes to the loss calculation. Every forward function has a corresponding backward function, and these backward functions are run in reverse order to the forward functions to compute the gradients.
 
 Frameworks like PyTorch have predefined backward functions that typically suffice for most users. However, for those seeking a deeper understanding or needing to implement a custom operation, it's necessary to understand how to define and manipulate these backward functions.
 
@@ -42,7 +42,7 @@ $$
 
 The inputs are the input of $f$ and the gradient of the loss $l$ with respect to each output of $f$. And the outputs are the gradient of the loss $l$ with respect to each input of $f$.
 
-The backward function $g$, also known as the vector-Jocobian product (VJP), calculates the backpropagated gradients. More on this later. For example, in PyTorch, you can define an auto-differentiable operation by providing a forward and backward function pair like so:
+The backward function $g$, also known as the vector-Jocobian product (VJP), calculates the backpropagated gradients. More on this later. For example, in PyTorch, you can define an auto-differentiable operation by providing a forward and backward function pair like so (by implementing [`torch.autograd.Function`](https://pytorch.org/docs/stable/autograd.html#torch.autograd.Function)):
 
 ```python
 import torch
@@ -85,7 +85,7 @@ The $u$ variables could be part of data structures such as a vector, matrix or t
 If the function has multiple data structures as inputs, we must consider all inputs in the chain rule. For example, given the function $y(\hat{a}, \hat{b})$, the chain rule would be ($i$ iterates over the full length of both vectors):
 
 $$
-\frac{\partial y(\hat{a}, \hat{b})}{\partial x}=\sum_{i} \frac{\partial y}{\partial a_{i}} \frac{\partial a_{i}}{\partial x}+\sum_{i} \frac{\partial y}{\partial b_{i}} \frac{\partial b_{i}}{\partial x}
+\frac{\partial y(\hat{a}, \hat{b})}{\partial x}=\sum_{i} \frac{\partial y}{\partial a_{i}} \frac{\partial a_{i}}{\partial x}+\sum_{j} \frac{\partial y}{\partial b_{j}} \frac{\partial b_{j}}{\partial x}
 $$
 
 Throughout this article, we use the partial derivative notation $\partial y / \partial x$ instead of the "normal" derivative notation $\mathrm{d} y / \mathrm{d} x$. This is because the functions are always assumed to be multivariable, and we don't know the relationship between those variables without further context. Partial derivatives can be reinterpreted as normal derivatives with further context.
@@ -164,7 +164,7 @@ $$
 \frac{\partial \hat{y}}{\partial x}=\binom{\frac{\partial y_{1}}{\partial x}}{\frac{\partial y_{2}}{\partial x}}=\binom{1}{1}
 $$
 
-### Application to backpropagation
+## Application to backpropagation
 
 Here, we apply multivariable calculus to derive the backward graph. For example, provided with a layer in a model which executes:
 
@@ -179,17 +179,17 @@ $$
 
 We can visually represent the dependencies, known as the forward graph:
 
-![](https://cdn.mathpix.com/cropped/2024_05_07_c7c3c439079236dbfba7g-04.jpg?height=307&width=203&top_left_y=1397&top_left_x=191)
+![Forward graph](/assets/img/backprop_1.svg){: width="150" }
 
 The forward graph represents many sub-graphs for each input and output combination. For example, if we consider the dependency of $y$ on $\hat{a}$, we would obtain the sub-graph:
 
-![](https://cdn.mathpix.com/cropped/2024_05_07_c7c3c439079236dbfba7g-04.jpg?height=298&width=200&top_left_y=1846&top_left_x=190)
+![sub-graph](/assets/img/backprop_2.svg){: width="150" }
 
 Different input and output combinations use the same forward functions and allow us to reuse computation, e.g. we only compute $u$ once as it can be reused when computing $y$ and $z$.
 
 To obtain the backward graph, first, we assume that a downstream scalar function $l$ consumes all outputs, so in our case $l(y, z)$. We don't need to know the function, just that the outputs are consumed by $l$. So, let's redraw the forward graph with the single output $l$.
 
-![](https://cdn.mathpix.com/cropped/2024_05_07_c7c3c439079236dbfba7g-05.jpg?height=412&width=193&top_left_y=111&top_left_x=191)
+![forward-graph-with-loss](/assets/img/backprop_3.svg){: width="150" }
 
 We also assume we are provided with backpropagated gradients for those outputs, $\partial l / \partial y$ and $\partial l / \partial z$. Then, we need to apply the chain rule for each function to find the dependencies of the gradients. For example, if we focus on $u$, it is consumed by two functions $y$ and $z$, both consumed by l. So:
 
@@ -199,7 +199,7 @@ $$
 
 This means that $\partial l / \partial u$ has a dependency on $\partial l / \partial y$ and $\partial l / \partial z$, which is the reverse dependency in the forward graph. This pattern holds for all the functions in the graph, and so to obtain the backward graph, we reverse all the dependencies. For example:
 
-![](https://cdn.mathpix.com/cropped/2024_05_07_c7c3c439079236dbfba7g-05.jpg?height=415&width=206&top_left_y=942&top_left_x=187)
+![backward-graph](/assets/img/backprop_4.svg){: width="150" }
 
 In the diagram, we are using a dash to represent the backpropagated gradients, e.g. $y^{\prime}=\partial l / \partial y$. There is also a dashed line between $l$ and $y^{\prime}$, as we don't know the function that maps from $l$ to $y^{\prime}$; all we need is the values of the backpropagated gradients $y^{\prime}$ and $z^{\prime}$.
 

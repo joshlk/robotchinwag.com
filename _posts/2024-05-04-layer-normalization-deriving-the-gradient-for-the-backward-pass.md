@@ -51,7 +51,7 @@ $$
 
 The tensor functions above have the following dependency graph:
 
-![](https://cdn.mathpix.com/cropped/2024_05_07_c7c3c439079236dbfba7g-16.jpg?height=724&width=417&top_left_y=1107&top_left_x=190)
+![dependency graph](/assets/img/layer_norm.svg){: width="250" }
 
 ## Gradient of weights
 
