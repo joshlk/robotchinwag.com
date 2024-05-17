@@ -1,0 +1,62 @@
+---
+---
+
+@import 'main
+{%- if jekyll.environment == 'production' -%}
+  .bundle
+{%- endif -%}
+';
+
+/* append your custom style below */
+
+
+/* Stop side icon hover animation */
+#sidebar #avatar img:hover {
+	transform: none;
+}
+
+/* Make image bigger and more center */
+#sidebar #avatar img {
+    width: 70%;
+    height: auto;
+    margin: auto;
+    display: block;
+    transform: translateY(+10%);
+}
+
+/* Make image container bigger */
+#sidebar #avatar {
+    width: 12rem;
+    height: 12rem;
+    background: white;
+
+}
+
+/* Hide "Recently Updated." and "Trending Tags" on post right sidebar */
+#panel-wrapper .access {
+	display: none;
+}
+
+/* Hide further reading/related posts */
+// #related-posts {
+// 	display: none;
+// }
+
+/* Hide "OLDER." and "NEWER" buttons in footer of posts */
+.post-navigation {
+	display: none !important;
+}
+
+// div.utterances {
+//     margin: 0;
+// }
+
+/* Stop the TOC auto collapsing */
+.is-collapsed {
+    max-height: none !important;
+}
+
+/* Remove tags from tabs (cant remove page as some pages link to it) */
+li.nav-item:nth-child(5) {
+    display: none;
+}
