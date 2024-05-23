@@ -17,6 +17,7 @@ Included in the blog series:
 
 All examples of deriving gradients using tensor calculus:
 
+* [Linear layer]({% link _posts/2024-05-23-linear-layer-deriving-the-gradient-for-the-backward-pass.md %})
 * [Element-wise or pointwise functions]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#example-element-wise-functions)
 * [Matrix multiplication]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#example-matrix-multiplication)
 * [Inverse of matrix]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#example-matrix-inverse)

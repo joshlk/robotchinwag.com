@@ -18,7 +18,7 @@ pin: false
 math: true
 ---
 
-This post explains how to calculate the gradients of layer normalisation used for backpropagation using tensor calculus and index notation. It is part of a [series]({% link _tabs/gradients for backpropagation.md %}) on differentiating and calculating gradients in deep learning. This example is quite long and involved but combines the different concepts presented in the article series. If you have not done so, be sure to become familiar with the [previous examples]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#example-element-wise-functions) first.
+This post explains how to calculate the gradients of layer normalisation used for backpropagation using [tensor calculus]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#tensor-calculus) and [index notation]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#index-notation). It is part of a [series]({% link _tabs/gradients for backpropagation.md %}) on differentiating and calculating gradients in deep learning. This example is quite long and involved but combines the different concepts presented in the article series. If you have not done so, be sure to become familiar with the [previous examples]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#example-element-wise-functions) first.
 
 PyTorch defines the layer normalization operation for an input matrix $X$, with shape batch size $(B)$ by hidden size $(H)$, as:
 

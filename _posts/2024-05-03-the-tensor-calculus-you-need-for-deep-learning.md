@@ -27,7 +27,7 @@ This article forms part of a [series]({% link _tabs/gradients for backpropagatio
 
 ## Tensors
 
-A tensor is a multi-dimensional ordered array of numbers, expanding the concept of a matrix into N-dimensions. Here, we are specifically talking about Cartesian tensors, which simplify the broader and more complex idea of tensors typically discussed in physics or mathematics. Focusing on Cartesian tensors removes the need to discuss complex topics such as universality, dual spaces, and tensor fields, which, while important in some fields, are not directly applicable to deep learning.
+A tensor is a multi-dimensional ordered array of numbers, expanding the concept of a matrix into N-dimensions. Here and in deep learning, we are specifically talking about N-dimensional Cartesian tensors, which are simpler than tensors typically discussed in physics or mathematics. Focusing on Cartesian tensors removes the need to make a distinction between [covariant and contravariant indices](https://en.wikipedia.org/wiki/Covariance_and_contravariance_of_vectors) and the same [transformation laws](https://phys.libretexts.org/Bookshelves/Relativity/General_Relativity_(Crowell)/04%3A_Tensors/4.04%3A_The_Tensor_Transformation_Laws) do not need to apply.
 
 A tensor $\mathcal{T}$ has components $t_{i \ldots j}$, where $i \ldots j$ means an arbitrary list of indices, including the indices $i$ and $j$. The number of indices indicates the number of axes the tensor has known as its rank or order; for example, $t_{i j}$ is an order-2 tensor. Tensors are denoted using an uppercase calligraphic font with the corresponding components in lowercase and with indices using lowercase Latin symbols.
 
@@ -149,6 +149,9 @@ $$
 $$
 a_{i j} b_{i j}=\alpha_{i j} \beta_{i j} \quad\text {(no sum i) }
 $$
+
+> Typically, in Physics, you use Einstein notation to represent tensors, which prevents dummy indices from appearing more than twice and guarantees that the resulting tensor conforms to the [transformation laws](https://phys.libretexts.org/Bookshelves/Relativity/General_Relativity_(Crowell)/04%3A_Tensors/4.04%3A_The_Tensor_Transformation_Laws). We are using Cartesian tensors, which don't have this restriction, and in deep learning, it is common to sum over more than two tensors, so here,  we allow a dummy index to appear more than twice in an expression.
+{: .prompt-warning }
 
 #### Kronecker Delta
 
@@ -538,7 +541,7 @@ We have two gradients to derive as the function has two matrix inputs: $X$ and $
 
 ### Gradient of $X$
 
-Let's first obtain the derivative with respect to $X$, remeber to use new free indices for the derivative operator:
+Let's first obtain the derivative with respect to $X$, remember to use new free indices for the derivative operator:
 
 $$
 \begin{aligned}
