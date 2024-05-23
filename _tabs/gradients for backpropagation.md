@@ -12,11 +12,10 @@ Gradients and auto-differentiation are the backbone of how deep learning models 
 Included in the blog series:
 
 * [The Tensor Calculus You Need for Deep Learning](/posts/the-tensor-calculus-you-need-for-deep-learning/) explains how to derive gradients using tensor calculus.
-* [A brief tour of backpropagation and multi-variable calculus](/posts/backpropagation-and-multivariable-calculus/) provides a refresher to the background needed.
+* [A brief tour of backpropagation and multi-variable calculus](/posts/backpropagation-and-multivariable-calculus/) provides a refresher to the background to the rest of the articles.
 * [The Gradients of Layer Normalization](/posts/layer-normalization-deriving-the-gradient-for-the-backward-pass/) is an good application of tensor calculus, as explained in the previous article on a more complex deep-learning function.
 
 All examples of deriving gradients using tensor calculus:
-
 
 * [Element-wise or pointwise functions](/posts/the-tensor-calculus-you-need-for-deep-learning/#example-element-wise-functions)
 * [Matrix multiplication](/posts/the-tensor-calculus-you-need-for-deep-learning/#example-matrix-multiplication)

@@ -25,7 +25,7 @@ chruby 3.1.3
 bundle exec jekyll s
 ```
 
-Use [this guide]([img_path](https://github.com/cotes2020/jekyll-theme-chirpy/wiki/Upgrade-Guide#upgrade-from-starter)) update the theme version.
+Use [this guide]([img_path](https://github.com/cotes2020/jekyll-theme-chirpy/wiki/Upgrade-Guide#upgrade-from-starter)) update the theme version. You will need to look at the diff and accomidate any changes (don't do it unless you have to).
 
 To update the template file:
 ```bash
@@ -39,4 +39,4 @@ You can make modifications to the site by copying files from the [themes repo](h
 
 ## Licence
 
-The theme is [MIT licensed]([/LICENSE](https://github.com/cotes2020/jekyll-theme-chirpy/blob/master/LICENSE). The blog contents are copyrighted by Josh Levy-Kramer. All rights are reserved.
+The theme is [MIT licensed]([/LICENSE](https://github.com/cotes2020/jekyll-theme-chirpy/blob/master/LICENSE). The blog's contents are copyrighted by Josh Levy-Kramer. All rights are reserved.
