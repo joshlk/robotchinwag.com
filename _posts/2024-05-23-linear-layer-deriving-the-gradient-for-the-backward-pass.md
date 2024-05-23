@@ -62,19 +62,25 @@ $$
 $$
 
 The second term with the bias $b_j$ is independent of $x_{ik}$ and so that's zero. In the first term $a_{jk}$ is just a factor and so can be moved outside the operator:
+
 $$
 \frac{\partial y_{i j}}{\partial x_{p q}} = \frac{\partial x_{i k} }{\partial x_{p q}} (a_{j k})^T
 $$
+
 From the [rules of tensor calculus]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#tensor-derivative-operator), we know that the derivative of a variable with itself equals a product of Krockener deltas:
 
 $$
 \frac{\partial y_{i j}}{\partial x_{p q}} = \delta_{i p} \delta_{k q} (a_{j k})^T
 $$
+
 We can then contract $k$ index to obtain:
+
 $$
 \frac{\partial y_{i j}}{\partial x_{p q}} = \delta_{i p} (a_{j q})^T
 $$
+
 This is an order-4 tensor, i.e. a tensor with 4 dimensions, and so can't be expressed using matrix notation. However, the tensor is only non-zero when $i == p$ due to the Krockener delta. Fortunately, the gradient used for backpropagation is a lower-order tensor, and we can use matrix notation. To do that lets first assume $y{ij}$ is an input of a scalar function $l$ and we are provided with the gradients of $l$ with respect to $y{ij}$. Then to derive the gradients for backpropagation, we apply the chain rule:
+
 $$
 \begin{aligned}
 \frac{\partial l}{\partial x_{p q}} & =\frac{\partial l}{\partial y_{i j}} \frac{\partial y_{i j}}{\partial x_{p q}} \\
@@ -82,13 +88,16 @@ $$
 & =\frac{\partial l}{\partial y_{p j}} (a_{j q})^T
 \end{aligned}
 $$
+
 We can convert it to matrix notation like so (the square brackets indicate taking the elements of the matrix):
+
 $$
 \begin{aligned}
 {\left[\frac{\partial l}{\partial X}\right]_{p q} } & =\left[\frac{\partial l}{\partial Y}\right]_{p j}\left[A\right]_{j q} \\
 \therefore \frac{\partial l}{\partial X} & =\frac{\partial l}{\partial Y} A
 \end{aligned}
 $$
+
 Therefore the gradient is calculated by multiplying the gradient of the loss $l$ with respect to the output $Y$ with the weights $A$.
 
 ### Gradient of $A$
@@ -122,11 +131,13 @@ $$
 \therefore \frac{\partial l}{\partial A} & =X^{T} \frac{\partial l}{\partial Y}
 \end{aligned}
 $$
+
 Therefore, the gradient is calculated by multiplying the transpose of the input $X$ with the gradient of the loss $l$ with respect to the output $Y$.
 
 ### Gradient of $\hat{b}$
 
 First we calculate the gradient of the output with respect to the bias:
+
 $$
 \begin{aligned}
 \frac{\partial y_{i j}}{\partial b_{p}} & = \frac{\partial}{\partial b_{p}} \left (x_{ik}(a_{jk})^T + \mathbf{1}_ib_j \right) \\
@@ -134,11 +145,14 @@ $$
 &= \mathbf{1}_i \frac{\partial b_j}{\partial b_{p}}
 \end{aligned}
 $$
+
 Again, using the [rules of tensor calculus]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#tensor-derivative-operator), we know that the derivative of a variable with itself equals a product of Krockener deltas:
+
 $$
 \frac{\partial y_{i j}}{\partial b_{p}} = \mathbf{1}_i \delta_{jp}
 $$
 Finally, we derive the gradient used for backpropagation by assuming a downstream loss $l$ consumes the output $y$:
+
 $$
 \begin{aligned}
 \frac{\partial l}{\partial b_p} & =\frac{\partial l}{\partial y_{i j}} \frac{\partial y_{i j}}{\partial b_{p}} \\
@@ -146,11 +160,15 @@ $$
 & =\frac{\partial l}{\partial y_{i p}} \mathbf{1}_i
 \end{aligned}
 $$
+
 Simply put, this means we sum the gradient in the $i$ dimension to obtain the backpropagated gradient of the bias:
+
 $$
 \frac{\partial l}{\partial b_p} = \sum_i \frac{\partial l}{\partial y_{i p}}
 $$
+
 Or in matrix notation, you can express this using a vector filled with ones:
+
 $$
 \frac{\partial l}{\partial \hat{b}} = \begin{pmatrix}
 1 & \cdots & 1
