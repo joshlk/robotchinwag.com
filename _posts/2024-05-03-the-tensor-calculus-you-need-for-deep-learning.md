@@ -85,7 +85,7 @@ $$
 
 As you can see, the notation gets unwieldy very quickly when the number of dimensions grows larger than 2. We also need a way of defining operations between tensors. We will, therefore, turn to index notation to provide a more convenient way to represent tensors of any order.
 
-## Index notation
+## Index Notation
 
 Index notation provides a convenient algebra to work with individual elements or components of a tensor. It can also be used to easily define opperations between tensors, for example, a matrix multiplication can be expressed as:
 
@@ -99,9 +99,9 @@ Index notation (not to be confused with multi-index notation) is a simplified ve
 
 Be aware that different authors use various flavours of index notation, so when reading other texts, look at the details of how they use the notation. The notation presented here derivates from others as its been addapted for Cartesian tensors and deep learning.
 
-### Index notation rulebook
+### Index Notation Rulebook
 
-#### Tensor indices
+#### Tensor Indices
 
 - A tensor is written using uppercase curly font $\mathcal{T}$. Its components are written in lowercase, with its indices in subscript $t_{i j k}$. You can obtain the components of a tensor using square brackets e.g. $$ \left [ \mathcal{T}  \right ]_{i j k}=t_{i j k} $$.
 
@@ -111,7 +111,7 @@ Be aware that different authors use various flavours of index notation, so when 
 - Indices are labelled using lowercase Latin symbols.
 
 
-#### Free indices
+#### Free Indices
 
 - Free indices describe a system of equations and imply that the expression is repeated, enumerating the index range. For example, if the index $i$ has the range $i=\{1,2,3\}$, then:
 
@@ -128,7 +128,7 @@ $$
 - An equation can have multiple free indices, representing the system of equations that enumerate all indices.
 
 
-#### Dummy indices
+#### Dummy Indices
 
 - Dummy indices appear twice or more in an additive term and do not appear on the LHS or equation subject. Dummy indices imply a summation, also known as a contraction:
 
@@ -150,7 +150,7 @@ $$
 a_{i j} b_{i j}=\alpha_{i j} \beta_{i j} \quad\text {(no sum i) }
 $$
 
-#### Kronecker delta
+#### Kronecker Delta
 
 - The Kronecker delta is an order-2 tensor whose components are 1 when the indices equal and zero otherwise:
 
@@ -184,7 +184,7 @@ $$
 \delta_{i j} b_{i p} c_{q j}=b_{j p} c_{q j}=b_{i p} c_{q i}
 $$
 
-#### One-tensor
+#### One-Tensor
 
 - The one-tensor is a tensor with the value 1 for all its components. It can be of any arbitrary order or shape:
 
@@ -237,7 +237,7 @@ When substituting one equation into another...
 - You cannot substitute into a contraction. For example, given $$ a=b_{k} c_{k} d_{k} $$ and $$ \beta=c_{k} d_{k}$$ it would be wrong to conclude $$ a=b_{k} \beta $$ because $$ b_{k} $$ is also part of the contraction.
 
 
-#### Addition and multiplication
+#### Addition and Multiplication
 
 - Only tensors of the same order can be added together, for example, $a_{i j}+b_{i j}$ is valid while $a_{i j}+b_{i}$ is not. Except for adding a tensor with a scalar $a_{i j}+b$, which is implicitly broadcasted to the appropriate order $a_{i j}+b \mathbf{1}_{i j}$.
 - The usual commutative and associative properties of addition and multiplications remain true ([see appendix]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#commutative-and-associative-properties-of-index-notation)).
@@ -259,7 +259,7 @@ a_{i} & =b_{i j} c_{i j}+b_{i j} d_{j} \\
 \end{aligned}
 $$
 
-#### Algebra of index notation
+#### Algebra of Index Notation
 
 - Provided an equation, it is valid to apply a function to both sides:
 
@@ -334,7 +334,7 @@ We now have a way of representing order-N tensors using a convenient notation. I
 
 Often, instead of referring to $a_{i j}$ as the components of an order-2 tensor, we will simply refer to $a_{i j}$ as the tensor. However, it should always be remembered that $a_{i j}$ are components and not the data structure itself.
 
-### Matrix expressions using index notation
+### Matrix Expressions using Index Notation
 
 Here are some common matrix operations expressed using index notation.
 
@@ -350,7 +350,7 @@ Here are some common matrix operations expressed using index notation.
 | Vector dot product | $\lambda=\hat{b} \cdot \hat{c}$ | $\lambda=b_{i} c_{i}$ |
 | Vector Euclidean norm (L2 norm) | $\lambda=\\|\hat{x}\\|$ | $\lambda=\sqrt{x_{i} x_{i}}$ |
 
-### Example: layer normalisation using index notation
+### Example: Layer Normalisation using Index Notation
 
 PyTorch defines the layer normalization (layer norm) operation for an input matrix $X$, with shape batch size $B$ by hidden size $H$, as:
 
@@ -394,7 +394,7 @@ $$
 
 We use the one-tensor twice to broadcast $m_{b}$ and $\beta_{h}$ to an order-2 tensors.
 
-## Tensor calculus
+## Tensor Calculus
 
 Tensor calculus allows us to consider how to differentiate a tensor with respect to a tensor.
 
@@ -407,9 +407,9 @@ $$
 
 We are going to focus on index notation, so the derivative of a tensor with respect to a tensor is the quantity $\frac{\partial y_{i \ldots j}}{\partial x_{p \ldots q}}$ and $\frac{\partial}{\partial x_{p \ldots q}}$ is the tensor derivative operator. Below, we list the rules for applying the operator, and then we can get onto some examples.
 
-### Tensor calculus rulebook
+### Tensor Calculus Rulebook
 
-#### Tensor derivative operator
+#### Tensor Derivative Operator
 
 - The derivative operator should always use new free indices. For example, given the equation:
 
@@ -435,7 +435,7 @@ $$
 \frac{\partial x_{i . . . j}}{\partial x_{p \ldots .}}=\underbrace{\delta_{i p} \ldots \delta_{j q}}_{N}
 $$
 
-#### Product and quotient rule
+#### Product and Quotient Rule
 
 - We can use the product rule to obtain the tensor derivative of a product:
 
@@ -457,7 +457,7 @@ $$
 
 This also works for contractions ($u$ and $v$ can include dummy indices).
 
-#### Chain rule
+#### Chain Rule
 
 - We can also use the chain rule. For example, if a function outputs $y$ and takes $u$ as input and $u$ is a function of $x$ i.e. $y_{a \ldots b}\left(u_{c \ldots d}\left(x_{i \ldots j}\right)\right)$, then:
 
@@ -494,7 +494,7 @@ In summary, to derive the backpropagated gradients of a tensor function, the ste
 
 Great! With this foundation, we're ready to move on to some practical examples.
 
-## Example: element-wise functions
+## Example: Element-Wise Functions
 
 An element-wise or pointwise function applies an univariable function to all tensor components. For example, we could apply the trigonometric function sine to all tensor values. Let's consider an arbitrary pointwise function point:
 
@@ -526,7 +526,7 @@ $$
 \end{aligned}
 $$
 
-## Example: matrix multiplication
+## Example: Matrix Multiplication
 
 Given $Y=X A$, we first need to convert it to index notation:
 
@@ -602,7 +602,7 @@ $$
 \end{aligned}
 $$
 
-## Example: matrix inverse
+## Example: Matrix Inverse
 
 Given $Y=X^{-1}$, we know from the definition of an inverse matrix that $I=X X^{-1}=X Y$ (assuming the inverse of $X$ exists). We convert this to index notation:
 
@@ -651,7 +651,7 @@ $$
 \end{aligned}
 $$
 
-## Example: cross-entropy loss
+## Example: Cross-Entropy Loss
 
 The cross-entropy loss is the softmax followed by the negative log-likelihood loss. Provided an input vector $\hat{x}$ of logits:
 
@@ -737,7 +737,7 @@ The [next part]({% link _posts/2024-05-04-layer-normalization-deriving-the-gradi
 
 ## Appendix
 
-### Commutative and associative properties of index notation
+### Commutative and Associative Properties of Index Notation
 
 The following usual commutative and associative properties for addition and multiplication apply to index notation:
 

@@ -62,7 +62,7 @@ class MatrixMultiplication(torch.autograd.Function):
 
 Don't worry about how the gradients are calculated - we will get onto that later. Importantly, each input of the forward function has a corresponding gradient output in the backward function, and each output of the forward function has a corresponding input of the backward function. The shapes of the tensors should also correspond with each other, e.g. `x.shape == dldx.shape`, `w.shape == dldw.shape` and `y.shape == dldy.shape`. The forward inputs are also captured using the `ctx.save_for_backward` function and obtained in the backwards function using the `ctx.saved_tensors` class attribute.
 
-## Multivariable calculus
+## Multivariable Calculus
 
 Most functions in deep learning have multiple inputs and outputs. A function that has multiple scalar inputs $f(u, v)$ is equivalent to a function that has a vector input $f(\hat{x})$, where $u$ and $v$ are the components of $\hat{x}$. This is known as a multivariable function, and it is said that "$f$ takes a vector" to indicate it has a vector input.
 
@@ -114,7 +114,7 @@ If the chain rule we first introduced can be applied to functions that use any d
 
 It seems logical to discuss matrix functions next; however, since the derivative of one matrix with respect to another is a tensor, we must first introduce tensors to proceed further. Following the examples, the next section will explore the application of multivariable calculus to backpropagation, and then [Part 2 introduce tensors and tensor calculus]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}).
 
-### Example: sum
+### Example: Sum
 
 Let's consider a "sum" operator which adds together two variables:
 
@@ -141,7 +141,7 @@ $$
 \end{array}\right)
 $$
 
-### Example: broadcast
+### Example: Broadcast
 
 For another example, let's consider two different functions that copy a value $x$:
 
@@ -164,7 +164,7 @@ $$
 \frac{\partial \hat{y}}{\partial x}=\binom{\frac{\partial y_{1}}{\partial x}}{\frac{\partial y_{2}}{\partial x}}=\binom{1}{1}
 $$
 
-## Application to backpropagation
+## Application to Backpropagation
 
 Here, we apply multivariable calculus to derive the backward graph. For example, provided with a layer in a model which executes:
 

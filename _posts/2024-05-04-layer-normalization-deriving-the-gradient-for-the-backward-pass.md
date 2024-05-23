@@ -54,7 +54,7 @@ The tensor functions above have the following dependency graph:
 
 ![dependency graph](/assets/img/layer_norm.svg){: width="250" }
 
-## Gradient of weights
+## Gradient of Weights
 
 Let's start with the easier gradients $\gamma$ and $\beta$:
 
@@ -74,7 +74,7 @@ $$
 \end{aligned}
 $$
 
-## The gradient of input $X$
+## Gradient of Input $X$
 
 Directly calculating the derivative of $y_{b h}$ with respect to $x_{p q}$ is quite complex and is an order-4 tensor. However, we don't need to construct this tensor fully since we can backpropagate the loss after each intermediate tensor function, simplifying the process. The backpropagated gradient is simpler because the loss is a scalar, meaning the gradient is, at most, an order-2 tensor.
 

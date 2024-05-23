@@ -23,7 +23,7 @@ All examples of deriving gradients using tensor calculus:
 * [Cross-Entropy Loss]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#example-cross-entropy-loss)
 * [Layer Normalization]({% link _posts/2024-05-04-layer-normalization-deriving-the-gradient-for-the-backward-pass.md %})
 
-## Why this series is needed?
+## Why is this Series Needed?
 
 The gradient of a matrix with respect to another matrix is a tensor, and the corresponding chain rule involves tensor products that are not representable using matrices. Thus, a solid understanding of tensor calculus is necessary to get a complete picture of gradients in deep learning.
 
