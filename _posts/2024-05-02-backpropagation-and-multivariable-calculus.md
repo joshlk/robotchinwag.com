@@ -18,7 +18,7 @@ pin: false
 math: true
 ---
 
-This post offers a concise overview of multivariable calculus and backpropagation to help you derive the gradients necessary for backpropigation in deep learning. This is a whistle-stop tour. For a more in-depth description, refer to the excellent article [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/). The [next post](/posts/the-tensor-calculus-you-need-for-deep-learning/) demonstrates how to combine these techniques with tensor calculus to derive gradients for any tensor function.
+This post offers a concise overview of multivariable calculus and backpropagation to help you derive the gradients necessary for backpropigation in deep learning. This is a whistle-stop tour. For a more in-depth description, refer to the excellent article [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/). The [next post]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}) demonstrates how to combine these techniques with tensor calculus to derive gradients for any tensor function.
 
 ## Backpropagation
 
@@ -112,7 +112,7 @@ $$
 
 If the chain rule we first introduced can be applied to functions that use any data structure, why do we need vector, matrix or tensor calculus? As we have seen, using matrices can significantly streamline the algebra involved.
 
-It seems logical to discuss matrix functions next; however, since the derivative of one matrix with respect to another is a tensor, we must first introduce tensors to proceed further. Following the examples, the next section will explore the application of multivariable calculus to backpropagation, and then [Part 2 introduce tensors and tensor calculus](/posts/the-tensor-calculus-you-need-for-deep-learning/).
+It seems logical to discuss matrix functions next; however, since the derivative of one matrix with respect to another is a tensor, we must first introduce tensors to proceed further. Following the examples, the next section will explore the application of multivariable calculus to backpropagation, and then [Part 2 introduce tensors and tensor calculus]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}).
 
 ### Example: sum
 
@@ -207,4 +207,4 @@ Again, the backward graph is many sub-graphs which map the inputs to every outpu
 
 ## Next
 
-We have done a quick tour of multivarible calculus and backpropigation. Next [Part 2 introducing tensors and tensor calculus](/posts/the-tensor-calculus-you-need-for-deep-learning/).
+We have done a quick tour of multivarible calculus and backpropigation. Next [Part 2 introducing tensors and tensor calculus]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}).

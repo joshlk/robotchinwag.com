@@ -19,11 +19,11 @@ math: true
 permalink: /posts/the-tensor-calculus-you-need-for-deep-learning/
 ---
 
-When learning deep learning theory, I was incredibly dissatisfied with how authors explained how to derive gradients for backpropagation. They would mostly focus on vectors (and rarely matrices), but in deep learning we use tensors everywhere! In part, this is probably due to the fact that working with tensors mathematically isn't easy and requires learning a whole bunch of background that most practitioners don't have. This post is a spiritual successor to the excellent article [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/) but for functions that work with tensors.
+When reading about deep learning theory, I was incredibly dissatisfied with the literature that explained how to derive gradients for backpropagation. It would mostly focus on vectors (and rarely matrices), but in deep-learning we use tensors everywhere! In part, this is probably since working with tensors mathematically isn't easy. This post is a spiritual successor to the excellent article [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/) but for functions that work with tensors.
 
-In this post, I introduce a complete and consistent framework for deriving gradients for backpropagation using tensor calculus. The [first section](#tensors) describes tensors (the type we use in deep learning) and introduces [index notation](#index-notation), a mathematical framework for working with them. Next is [tensor calculus](#tensor-calculus). Then I show [some examples](#example-element-wise-functions) of how to apply the framework.
+In this post, I introduce a complete and consistent framework for deriving gradients for backpropagation using tensor calculus. The [first section](#tensors) describes tensors (the type we use in deep learning) and introduces [index notation](#index-notation), a mathematical framework for working with them. Then we can get to [tensor calculus](#tensor-calculus) its self and show [some examples](#example-element-wise-functions).
 
-This article forms part of a [series](/posts/gradients-for-backpropagation/) on differentiating and calculating gradients in deep learning. [Part 1](/posts/backpropagation-and-multivariable-calculus/) introduced backpropagation and multivariable calculus, which sets up some of the ideas used in this article. Here, we get to the meat of the theory: tensors and tensor calculus using index notation.
+This article forms part of a [series]({% link _tabs/gradients for backpropagation.md %}) on differentiating and calculating gradients in deep learning. [Part 1]({% link _posts/2024-05-02-backpropagation-and-multivariable-calculus.md %}) introduced backpropagation and multivariable calculus, which sets up some of the ideas used in this article. Here, we get to the meat of the theory: tensors and tensor calculus using index notation.
 
 ## Tensors
 
@@ -240,7 +240,7 @@ When substituting one equation into another...
 #### Addition and multiplication
 
 - Only tensors of the same order can be added together, for example, $a_{i j}+b_{i j}$ is valid while $a_{i j}+b_{i}$ is not. Except for adding a tensor with a scalar $a_{i j}+b$, which is implicitly broadcasted to the appropriate order $a_{i j}+b \mathbf{1}_{i j}$.
-- The usual commutative and associative properties of addition and multiplications remain true ([see appendix](/posts/the-tensor-calculus-you-need-for-deep-learning/#commutative-and-associative-properties-of-index-notation)).
+- The usual commutative and associative properties of addition and multiplications remain true ([see appendix]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#commutative-and-associative-properties-of-index-notation)).
 - Tensors don't distribute or factorise in the usual way. An expression can only be factorised, provided that all additive terms result in having the same tensor-order. For example:
 
 $$
@@ -725,7 +725,7 @@ It might be the case that we start backpropagation using the cross-entropy loss,
 
 ## Next
 
-The [next part](/posts/layer-normalization-deriving-the-gradient-for-the-backward-pass/) of the series looks into applying these techniques to a more difficult function, layer normalisation.
+The [next part]({% link _posts/2024-05-04-layer-normalization-deriving-the-gradient-for-the-backward-pass.md %}) of the series looks into applying these techniques to a more difficult function, layer normalisation.
 
 ## References
 

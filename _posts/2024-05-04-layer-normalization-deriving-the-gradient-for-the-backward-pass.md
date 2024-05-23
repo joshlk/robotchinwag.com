@@ -18,7 +18,7 @@ pin: false
 math: true
 ---
 
-This post explains how to calculate the gradients of layer normalisation used for backpropagation using tensor calculus and index notation. It is part of a [series](/posts/gradients-for-backpropagation/) on differentiating and calculating gradients in deep learning. This example is quite long and involved but combines the different concepts presented in the article series. If you have not done so, be sure to become familiar with the [previous examples](/posts/the-tensor-calculus-you-need-for-deep-learning/#example-element-wise-functions) first.
+This post explains how to calculate the gradients of layer normalisation used for backpropagation using tensor calculus and index notation. It is part of a [series]({% link _tabs/gradients for backpropagation.md %}) on differentiating and calculating gradients in deep learning. This example is quite long and involved but combines the different concepts presented in the article series. If you have not done so, be sure to become familiar with the [previous examples]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#example-element-wise-functions) first.
 
 PyTorch defines the layer normalization operation for an input matrix $X$, with shape batch size $(B)$ by hidden size $(H)$, as:
 
@@ -28,7 +28,7 @@ $$
 
 Where the mean $\mathrm{E}[x]$ and variance $\operatorname{Var}[x]$ are calculated for each sample in a batch, and $\gamma$ and $\beta$ are learnable vector weights with lengths equal to the hidden size. $\epsilon$ is a constant usually equal to $1 \mathrm{e}-05$.
 
-[As shown previously](/posts/the-tensor-calculus-you-need-for-deep-learning/#example-layer-normalisation-using-index-notation), we can represent this using index notation:
+[As shown previously]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#example-layer-normalisation-using-index-notation), we can represent this using index notation:
 $$
 \begin{aligned}
 m_{b} & =\frac{1}{H} \mathbf{1}_{h} x_{b h} \\
@@ -263,4 +263,4 @@ $$
 
 ## Next
 
-Further examples of calculating gradients using tensor calculus and index notation can be found on the [intro page](/posts/gradients-for-backpropagation/).
+Further examples of calculating gradients using tensor calculus and index notation can be found on the [intro page]({% link _tabs/gradients for backpropagation.md %}).
