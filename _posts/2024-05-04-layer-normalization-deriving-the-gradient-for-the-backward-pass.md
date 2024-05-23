@@ -29,6 +29,7 @@ $$
 Where the mean $\mathrm{E}[x]$ and variance $\operatorname{Var}[x]$ are calculated for each sample in a batch, and $\gamma$ and $\beta$ are learnable vector weights with lengths equal to the hidden size. $\epsilon$ is a constant usually equal to $1 \mathrm{e}-05$.
 
 [As shown previously]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#example-layer-normalisation-using-index-notation), we can represent this using index notation:
+
 $$
 \begin{aligned}
 m_{b} & =\frac{1}{H} \mathbf{1}_{h} x_{b h} \\

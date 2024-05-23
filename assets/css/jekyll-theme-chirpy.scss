@@ -60,3 +60,8 @@
 li.nav-item:nth-child(5) {
     display: none;
 }
+
+/* Add Robot Chinwag text to header when viewing from mobile */
+#topbar-title::before {
+	content: "Robot Chinwag »";
+}
