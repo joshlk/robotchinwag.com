@@ -51,7 +51,7 @@ In the first expression, the $k$ index is repeated, meaning it's a dummy index, 
 
 ## Gradients of all the inputs
 
-Next, we want to calculate the gradient of the input tensors $x_{ik}$, $(a_{jk})^T$ and $b_j$.
+Next, we want to calculate the gradient of the input tensors $x_{ik}$, $a_{jk}$ and $b_j$.
 
 ### The gradient of $X$
 
@@ -79,7 +79,7 @@ $$
 \frac{\partial y_{i j}}{\partial x_{p q}} = \delta_{i p} (a_{j q})^T
 $$
 
-This is an order-4 tensor, i.e. a tensor with 4 dimensions, and so can't be expressed using matrix notation. However, the tensor is only non-zero when $i == p$ due to the Krockener delta. Fortunately, the gradient used for backpropagation is a lower-order tensor, and we can use matrix notation. To do that lets first assume $y{ij}$ is an input of a scalar function $l$ and we are provided with the gradients of $l$ with respect to $y{ij}$. Then to derive the gradients for backpropagation, we apply the chain rule:
+This is an order-4 tensor, i.e. a tensor with 4 dimensions, and so can't be expressed using matrix notation. However, the tensor is only non-zero when $i == p$ due to the Krockener delta. Fortunately, the gradient used for backpropagation is a lower-order tensor, and we can use matrix notation. To do that lets first assume $y_{ij}$ is an input of a scalar function $l$ and we are provided with the gradients of $l$ with respect to $y_{ij}$. Then to derive the gradients for backpropagation, we apply the chain rule:
 
 $$
 \begin{aligned}
