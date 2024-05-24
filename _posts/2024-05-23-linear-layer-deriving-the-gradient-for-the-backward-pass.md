@@ -18,22 +18,22 @@ pin: false
 math: true
 ---
 
-The linear layer, a.k.a. dense layer, is fundamental in deep learning and used everywhere. [PyTorch](https://pytorch.org/docs/stable/generated/torch.nn.Linear.html) defines the linear layer as:
+The [linear layer](https://pytorch.org/docs/stable/generated/torch.nn.Linear.html), a.k.a. [dense layer](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dense) or [fully-connected layer](https://docs.nvidia.com/deeplearning/performance/dl-performance-fully-connected/index.html), is everywhere in deep learning and forms the foundation to most neural networks. [PyTorch defines the linear layer](https://pytorch.org/docs/stable/generated/torch.nn.Linear.html)) as:
 
-> Applies a linear transformation to the incoming data: $Y = XA^T + \hat{b}$.
+> A linear transformation to the incoming data: $Y = XA^T + \hat{b}$.
 
-Whereby the shapes are:
+Whereby the shapes and tensors are:
 
 * Input $X$: (∗, in_features) 
 * Weights $A$: (out_features,in_features)
 * Bias $\hat{b}$: (out_features)
 * Output $Y$: (∗, out_features)
 
-The start "∗" means any number of dimensions. PyTorch is a bit unusual in that it takes the transpose of the weights matrix $A$ before multiplying it with the input $X$. The hat over $\hat{b}$ indicates its a vector.
+The "∗" means any number of dimensions. PyTorch is a bit unusual in that it takes the transpose of the weights matrix $A$ before multiplying it with the input $X$. The hat over $\hat{b}$ indicates it's a vector.
 
-In this article we are going to derive the gradient used for backpropagation for the linear layer. We will be using [index notation]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#index-notation) so that we can easily express the function in a more concise way and use [tensor calculus]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#tensor-calculus) to calculate the gradients.
+In this article, we will derive the gradients used for backpropagation for the linear layer. This function is used when calling [`Y.backwards()`](https://pytorch.org/docs/stable/generated/torch.Tensor.backward.html) on the output tensor `Y`. We will use index notation to express the function more concisely and [tensor calculus]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#tensor-calculus) to calculate the gradients.
 
-To derive the gradient for each input, we proceed as follows:
+To derive the gradient *for each input*, we proceed as follows:
 
 1. Translate the function into index notation.
 2. Calculate the derivative with respect to the output.
@@ -41,7 +41,7 @@ To derive the gradient for each input, we proceed as follows:
 
 ## Using Index Notation
 
-To keep it simple, we are going to assume there is only one "∗" dimension, and it's easy enough to extend the reasoning to more dimensions. We can express the linear layer using [index notation]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#index-notation) like so:
+To keep it simple, we are going to assume there is only one "∗" dimension, and it's easy enough to extend the reasoning to more. We can express the linear layer using [index notation]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#index-notation) like so:
 
 $$
 y_{ij} = x_{ik}(a_{jk})^T + \mathbf{1}_ib_j
@@ -177,4 +177,4 @@ $$
 
 ## Next
 
-If you would like to read more how to derive gradients using tensor calculus and index notation please have a look at the [series introduction]({% link _tabs/gradients for backpropagation.md %}) or [The Tensor Calculus You Need for Deep Learning]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}).
+If you would like to read more about calculating gradients using tensor calculus and index notation, please have a look at the [series introduction]({% link _tabs/gradients for backpropagation.md %}) or [The Tensor Calculus You Need for Deep Learning]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}).
