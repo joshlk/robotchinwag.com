@@ -19,7 +19,7 @@ title: Robot Chinwag # the main title
 tagline: Deep Learning and Robotic Rambles. # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
-  AI and deep learning blog by Josh Levy-Kramer.
+  Deep Learning and Robotic Rambles. AI blog by Josh Levy-Kramer.
 
 # Fill in the protocol & hostname for your site.
 # e.g. 'https://username.github.io', note that it does not end with a '/'.
