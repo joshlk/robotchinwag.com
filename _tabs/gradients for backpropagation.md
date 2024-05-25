@@ -15,7 +15,7 @@ Included in the blog series:
 * [A brief tour of backpropagation and multi-variable calculus]({% link _posts/2024-05-02-backpropagation-and-multivariable-calculus.md %}) provides a refresher to the background to the rest of the articles.
 * [The Gradients of Layer Normalization]({% link _posts/2024-05-04-layer-normalization-deriving-the-gradient-for-the-backward-pass.md %}) is an good application of tensor calculus, as explained in the previous article on a more complex deep-learning function.
 
-All examples of deriving gradients using tensor calculus:
+Other examples of using tensor calculus to calculate gradients:
 
 * [Linear layer]({% link _posts/2024-05-23-linear-layer-deriving-the-gradient-for-the-backward-pass.md %})
 * [Element-wise or pointwise functions]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#example-element-wise-functions)
