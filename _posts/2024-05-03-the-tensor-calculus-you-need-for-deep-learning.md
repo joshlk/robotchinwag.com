@@ -189,7 +189,7 @@ $$
 
 #### One-Tensor
 
-- The one-tensor is a tensor with the value 1 for all its components. It can be of any arbitrary order or shape:
+- The one-tensor is a tensor with the value 1 for all its components. It can be of any order or shape:
 
 $$
 \mathbf{1}_{i \ldots j}=1
