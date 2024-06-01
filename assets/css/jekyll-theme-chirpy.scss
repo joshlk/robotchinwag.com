@@ -9,7 +9,6 @@
 
 /* append your custom style below */
 
-
 /* Stop side icon hover animation */
 #sidebar #avatar img:hover {
 	transform: none;
@@ -29,7 +28,6 @@
     width: 12rem;
     height: 12rem;
     background: white;
-
 }
 
 /* Hide "Recently Updated." and "Trending Tags" on post right sidebar */
@@ -37,19 +35,10 @@
 	display: none;
 }
 
-/* Hide further reading/related posts */
-// #related-posts {
-// 	display: none;
-// }
-
 /* Hide "OLDER." and "NEWER" buttons in footer of posts */
 .post-navigation {
 	display: none !important;
 }
-
-// div.utterances {
-//     margin: 0;
-// }
 
 /* Stop the TOC auto collapsing */
 .is-collapsed {
@@ -64,4 +53,9 @@ li.nav-item:nth-child(5) {
 /* Add Robot Chinwag text to header when viewing from mobile */
 #topbar-title::before {
 	content: "Robot Chinwag »";
+}
+
+/* Make unordered lists (bullets) word-wrap inside a table */
+td ul li {
+    white-space: break-spaces;
 }

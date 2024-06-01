@@ -71,10 +71,6 @@ analytics:
   cloudflare:
     id: # fill in your Cloudflare Web Analytics token
 
-# Pageviews settings
-pageviews:
-  provider: # now only supports 'goatcounter'
-
 # Prefer color scheme setting.
 #
 # Note: Keep empty will follow the system prefer color by default,

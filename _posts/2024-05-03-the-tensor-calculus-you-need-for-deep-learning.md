@@ -16,7 +16,6 @@ tags:
   - index notation
 pin: false
 math: true
-permalink: /posts/the-tensor-calculus-you-need-for-deep-learning/
 ---
 
 When reading about deep learning theory, I was incredibly dissatisfied with the literature that explained how to derive gradients for backpropagation. It would mostly focus on vectors (and rarely matrices), but in deep-learning we use tensors everywhere! In part, this is probably since working with tensors mathematically isn't easy. This post is a spiritual successor to the excellent article [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/) but for functions that work with tensors.
