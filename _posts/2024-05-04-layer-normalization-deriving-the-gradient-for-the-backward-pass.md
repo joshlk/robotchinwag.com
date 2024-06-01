@@ -1,7 +1,7 @@
 ---
 title: "Layer Normalization, Deriving the Gradient for the Backward Pass"
 description: >-
-  Deriving the gradient for the backward pass for layer normalization using tensor calculus
+  Obtaining the gradient of the layer normalization layer
 #author: Josh Levy-Kramer
 date: 2024-05-04 12:01:00 +0000
 categories:
