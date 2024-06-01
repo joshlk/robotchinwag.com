@@ -232,6 +232,8 @@ So the backward pass of the pairwise sharded feed-forward layer is:
 
 ### Long answer
 
+This section is heavy on the theory - if you need a refresher on how to derive gradients in deep learning, have a look at my post: [a brief tour of backpropagation and multi-variable calculus.]({% link _posts/2024-05-02-backpropagation-and-multivariable-calculus.md %})
+
 #### Column-wise sharding
 
 The computational graph for column-wise sharding is ($X$ and $A$ have the same shape and definitions as the previous section):
