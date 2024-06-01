@@ -42,6 +42,6 @@ git merge template/master --squash
 
 You can make modifications to the site by copying files from the [themes repo](https://github.com/cotes2020/jekyll-theme-chirpy) and modifying them.
 
-## Licence
+## License
 
-The theme is [MIT licensed]([/LICENSE](https://github.com/cotes2020/jekyll-theme-chirpy/blob/master/LICENSE). The blog's contents are copyrighted by Josh Levy-Kramer. All rights are reserved.
+The theme is [MIT licensed](https://github.com/cotes2020/jekyll-theme-chirpy/blob/master/LICENSE). The blog's contents are copyrighted by Josh Levy-Kramer. All rights are reserved.
