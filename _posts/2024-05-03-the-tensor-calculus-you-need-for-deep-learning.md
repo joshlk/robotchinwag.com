@@ -26,7 +26,7 @@ This article forms part of a [series]({% link _tabs/gradients for backpropagatio
 
 ## Tensors
 
-A tensor is a multi-dimensional ordered array of numbers, expanding the concept of a matrix into N-dimensions. Here and in deep learning, we are specifically talking about N-dimensional Cartesian tensors, which are simpler than tensors typically discussed in physics or mathematics. Focusing on Cartesian tensors removes the need to make a distinction between [covariant and contravariant indices](https://en.wikipedia.org/wiki/Covariance_and_contravariance_of_vectors) and the same [transformation laws](https://phys.libretexts.org/Bookshelves/Relativity/General_Relativity_(Crowell)/04%3A_Tensors/4.04%3A_The_Tensor_Transformation_Laws) do not need to apply.
+A tensor is a multi-dimensional ordered array of numbers, expanding the concept of a matrix into N-dimensions. Here and in deep learning, we are specifically talking about N-dimensional [Cartesian tensors](https://en.wikipedia.org/wiki/Cartesian_tensor), which are simpler than tensors typically discussed in physics or mathematics. Focusing on Cartesian tensors removes the need to make a distinction between [covariant and contravariant indices](https://en.wikipedia.org/wiki/Covariance_and_contravariance_of_vectors) and the same [transformation laws](https://phys.libretexts.org/Bookshelves/Relativity/General_Relativity_(Crowell)/04%3A_Tensors/4.04%3A_The_Tensor_Transformation_Laws) do not need to apply.
 
 A tensor $\mathcal{T}$ has components $t_{i \ldots j}$, where $i \ldots j$ means an arbitrary list of indices, including the indices $i$ and $j$. The number of indices indicates the number of axes the tensor has known as its rank or order; for example, $t_{i j}$ is an order-2 tensor. Tensors are denoted using an uppercase calligraphic font with the corresponding components in lowercase and with indices using lowercase Latin symbols.
 
@@ -86,17 +86,21 @@ As you can see, the notation gets unwieldy very quickly when the number of dimen
 
 ## Index Notation
 
-Index notation provides a convenient algebra to work with individual elements or components of a tensor. It can also be used to easily define opperations between tensors, for example, a matrix multiplication can be expressed as:
+Index notation provides a convenient algebra to work with individual elements or components of a tensor. It can also be used to easily define operations between tensors, for example, a matrix multiplication can be expressed as:
 
 $$
 c_{i k}=a_{i j} b_{j k}
 $$
 
-Below, we explain the rules of index notation and how to understand the above expression.
+Below, I explain the rules of index notation and how to understand the above expression.
 
-Index notation (not to be confused with multi-index notation) is a simplified version of Einstein notation or Ricci calculus that works with Cartesian tensors. Importantly, not all the normal algebra rules apply with index notation, so we must take care when first using it.
+Index notation (not to be confused with multi-index notation) is a simplified version of [Einstein notation](https://en.wikipedia.org/wiki/Einstein_notation) or [Ricci calculus](https://en.wikipedia.org/wiki/Ricci_calculus) that works with [Cartesian tensors](https://en.wikipedia.org/wiki/Cartesian_tensor).
 
-Be aware that different authors use various flavours of index notation, so when reading other texts, look at the details of how they use the notation. The notation presented here derivates from others as its been addapted for Cartesian tensors and deep learning.
+> Not all the normal algebra rules apply with index notation, so we must take care when first using it.
+{: .prompt-warning }
+
+> There are many flavours of index notation with different subtleties. When reading other texts, look at the details of the rules they use. The notation presented here has been adapted for deep learning.
+{: .prompt-warning }
 
 ### Index Notation Rulebook
 
@@ -188,7 +192,7 @@ $$
 
 #### One-Tensor
 
-- The one-tensor is a tensor with the value 1 for all its components. It can be of any arbitrary order or shape:
+- The one-tensor is a tensor with the value 1 for all its components. It can be of any order or shape:
 
 $$
 \mathbf{1}_{i \ldots j}=1

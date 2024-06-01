@@ -18,11 +18,13 @@ pin: false
 math: true
 ---
 
-The [linear layer](https://pytorch.org/docs/stable/generated/torch.nn.Linear.html), a.k.a. [dense layer](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dense) or [fully-connected layer](https://docs.nvidia.com/deeplearning/performance/dl-performance-fully-connected/index.html), is everywhere in deep learning and forms the foundation to most neural networks. [PyTorch defines the linear layer](https://pytorch.org/docs/stable/generated/torch.nn.Linear.html)) as:
+The [linear layer](https://pytorch.org/docs/stable/generated/torch.nn.Linear.html), a.k.a. [dense layer](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dense) or [fully-connected layer](https://docs.nvidia.com/deeplearning/performance/dl-performance-fully-connected/index.html), is everywhere in deep learning and forms the foundation to most neural networks. [PyTorch defines the linear layer](https://pytorch.org/docs/stable/generated/torch.nn.Linear.html) as:
 
-> A linear transformation to the incoming data: $Y = XA^T + \hat{b}$.
+$$
+Y = XA^T + \hat{b}
+$$
 
-Whereby the shapes and tensors are:
+Whereby the tensors and their shapes are:
 
 * Input $X$: (∗, in_features) 
 * Weights $A$: (out_features,in_features)
@@ -31,7 +33,7 @@ Whereby the shapes and tensors are:
 
 The "∗" means any number of dimensions. PyTorch is a bit unusual in that it takes the transpose of the weights matrix $A$ before multiplying it with the input $X$. The hat over $\hat{b}$ indicates it's a vector.
 
-In this article, we will derive the gradients used for backpropagation for the linear layer. This function is used when calling [`Y.backwards()`](https://pytorch.org/docs/stable/generated/torch.Tensor.backward.html) on the output tensor `Y`. We will use index notation to express the function more concisely and [tensor calculus]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#tensor-calculus) to calculate the gradients.
+In this article, we will derive the gradients used for backpropagation for the linear layer, function used when calling [`Y.backwards()`](https://pytorch.org/docs/stable/generated/torch.Tensor.backward.html) on the output tensor `Y`. We will use [index notation]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#index-notation) to express the function more precisely and [tensor calculus]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#tensor-calculus) to calculate the gradients.
 
 To derive the gradient *for each input*, we proceed as follows:
 
