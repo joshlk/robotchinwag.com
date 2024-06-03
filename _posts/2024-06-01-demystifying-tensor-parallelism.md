@@ -1,5 +1,5 @@
 ---
-title: "Demystify Tensor Parallelism"
+title: "Demystifying Tensor Parallelism"
 description: >-
   How does tensor parallelism work?
 #author: Josh Levy-Kramer
