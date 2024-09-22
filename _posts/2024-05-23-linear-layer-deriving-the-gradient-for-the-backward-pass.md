@@ -63,7 +63,7 @@ $$
 \frac{\partial y_{i j}}{\partial x_{p q}} = \frac{\partial}{\partial x_{p q}} \left (x_{ik}(a_{jk})^T + \mathbf{1}_ib_j \right)
 $$
 
-The second term with the bias $b_j$ is independent of $x_{ik}$ and so that's zero. In the first term $a_{jk}$ is just a factor and so can be moved outside the operator:
+The second term with the bias $b_j$ is independent of $x_{p q}$ and so that's zero. In the first term $a_{jk}$ is just a factor and so can be moved outside the operator:
 
 $$
 \frac{\partial y_{i j}}{\partial x_{p q}} = \frac{\partial x_{i k} }{\partial x_{p q}} (a_{j k})^T
