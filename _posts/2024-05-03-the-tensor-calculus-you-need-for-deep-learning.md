@@ -356,6 +356,8 @@ Here are some common matrix operations expressed using index notation.
 | Vector dot product | $\lambda=\hat{b} \cdot \hat{c}$ | $\lambda=b_{i} c_{i}$ |
 | Vector Euclidean norm (L2 norm) | $\lambda=\\|\hat{x}\\|$ | $\lambda=\sqrt{x_{i} x_{i}}$ |
 
+We often want to convert back and forth between the two notations and transposes are quite common. So a shorthand notation is often used: $a_{i j} = (a^T)_{j i}$ whereby $a^T$ are the components of the tensor $A^T$.
+
 ### Example: Layer Normalisation using Index Notation
 
 PyTorch defines the layer normalization (layer norm) operation for an input matrix $X$, with shape batch size $B$ by hidden size $H$, as:
