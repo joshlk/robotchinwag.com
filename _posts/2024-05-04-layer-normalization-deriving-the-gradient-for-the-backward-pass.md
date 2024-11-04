@@ -352,7 +352,7 @@ beta = torch.rand(H, dtype=torch.float64, requires_grad=True)
 torch.autograd.gradcheck(LayerNormManual.apply, (x,gamma,beta), eps=1e-6, atol=0.1, rtol=0.1)
 ```
 
-Notice that the input tensor dtypes have been increased to float64. The grad check files when using float32, likely due to the numerical instability of the check.
+Notice that the input tensor dtypes have been increased to float64. The grad check fails when using float32, likely due to the numerical instability of the check.
 
 ## Next
 
