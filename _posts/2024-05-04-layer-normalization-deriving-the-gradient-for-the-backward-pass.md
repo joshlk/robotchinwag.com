@@ -29,7 +29,6 @@ $$
 Where the mean $\mathrm{E}[x]$ and variance $\operatorname{Var}[x]$ are calculated for each sample in a batch, and $\gamma$ and $\beta$ are learnable vector weights with lengths equal to the hidden size. $\epsilon$ is a constant usually equal to $1 \mathrm{e}-05$.
 
 [As shown previously]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#example-layer-normalisation-using-index-notation), we can represent this using index notation:
-
 $$
 \begin{aligned}
 m_{b} & =\frac{1}{H} \mathbf{1}_{h} x_{b h} \\
@@ -261,6 +260,99 @@ $$
 \frac{\partial l}{\partial x_{p q}}=\frac{\partial l}{\partial y_{p q}} \frac{\gamma_{q}}{\sigma_{p}}-\frac{\partial l}{\partial y_{p h}} \frac{\gamma_{h}}{H}\left(\frac{\mathbf{1}_{q}}{\sigma_{p}}+\frac{\mu_{p h} \mu_{p q}}{\sigma_{p}^{3}}\right)
 \end{gathered}
 $$
+
+
+
+## PyTorch Implementation
+
+We can numerically check the above result by implementing the equations in PyTorch and numerically comparing the result to the built-in PyTorch function:
+
+```python
+import torch
+
+# Create random inputs
+torch.manual_seed(42)
+B, H = 128, 256
+eps = 1e-05
+x = torch.rand((B, H), dtype=torch.float32, requires_grad=True)
+gamma = torch.rand(H, dtype=torch.float32, requires_grad=True)
+beta = torch.rand(H, dtype=torch.float32, requires_grad=True)
+dldy = torch.rand((B, H), dtype=torch.float32)
+
+# Run forward and backward pass using built-in function
+y = torch.nn.functional.layer_norm(x, [H], gamma, beta)
+y.backward(dldy)
+
+# Calculate gradients using above equations
+m = x.mean(axis=1)
+mu = x - m.unsqueeze(1)
+v = torch.mean(mu**2, axis=1)
+sigma = torch.sqrt(v + eps)
+
+dldgamma = torch.einsum('bq,bq,b->q', [dldy, mu, 1/sigma])
+dldbeta = dldy.sum(axis=0)
+
+dldx = (
+    dldy*gamma.unsqueeze(0) / sigma.unsqueeze(1)
+    - 1/H * torch.einsum('ph,h,p->p', [dldy, gamma, 1/sigma]).unsqueeze(1)
+    - 1/H * mu * torch.einsum('ph,h,ph,p->p', [dldy, gamma, mu, sigma**(-3)]).unsqueeze(1)
+)
+
+# Compare against PyTorch
+torch.testing.assert_close(dldgamma, gamma.grad)
+torch.testing.assert_close(dldbeta, beta.grad)
+torch.testing.assert_close(dldx, x.grad)
+```
+
+We can also implement our own custom PyTorch layer as well:
+
+```python
+class LayerNormManual(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, x: torch.Tensor, gamma: torch.Tensor, beta: torch.Tensor):
+        eps = 1e-05
+        assert x.dim() == 2
+        B, H = x.shape
+        m = x.mean(axis=1)
+        mu = x - m.unsqueeze(1)
+        v = torch.mean(mu**2, axis=1)
+        sigma = torch.sqrt(v + eps)
+        
+        y = (mu/sigma.unsqueeze(1))*gamma.unsqueeze(0) + beta.unsqueeze(0)
+        
+        ctx.save_for_backward(x, m, mu, v, sigma, y)
+        
+        return y
+        
+    @staticmethod
+    def backward(ctx, dldy):
+        x, m, mu, v, sigma, y = ctx.saved_tensors
+        B, H = x.shape
+        
+        dldgamma = torch.einsum('bq,bq,b->q', [dldy, mu, 1/sigma])
+        dldbeta = dldy.sum(axis=0)
+        
+        dldx = (
+            dldy*gamma.unsqueeze(0) / sigma.unsqueeze(1)
+            - 1/H * torch.einsum('ph,h,p->p', [dldy, gamma, 1/sigma]).unsqueeze(1)
+            - 1/H * mu * torch.einsum('ph,h,ph,p->p', [dldy, gamma, mu, sigma**(-3)]).unsqueeze(1)
+        )
+        
+        return dldx, dldgamma, dldbeta
+```
+
+PyTorch also provides a function called [gradcheck](https://pytorch.org/docs/stable/generated/torch.autograd.gradcheck.gradcheck.html) to calculate the gradient of a layer using finite-differences and check to see if the backward function matches. So, we can also use that to assert the layer is correct:
+
+```python
+torch.manual_seed(42)
+B, H = 32, 64
+x = torch.rand((B, H), dtype=torch.float64, requires_grad=True)
+gamma = torch.rand(H, dtype=torch.float64, requires_grad=True)
+beta = torch.rand(H, dtype=torch.float64, requires_grad=True)
+torch.autograd.gradcheck(LayerNormManual.apply, (x,gamma,beta), eps=1e-6, atol=0.1, rtol=0.1)
+```
+
+Notice that the input tensor dtypes have been increased to float64. The grad check files when using float32, likely due to the numerical instability of the check.
 
 ## Next
 
