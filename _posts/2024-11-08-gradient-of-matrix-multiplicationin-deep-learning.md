@@ -1,5 +1,5 @@
 ---
-title: "Differentiating Matrix Multiplication and Deriving the Gradient for the Backward Pass"
+title: "Gradient of Matrix Multiplication in Deep Learning"
 description: >-
   Deriving the gradient for the backward pass for matrix multiplication using tensor calculus
 #author: Josh Levy-Kramer
@@ -18,9 +18,9 @@ pin: false
 math: true
 ---
 
-Matrix multiplication ([matmul](https://pytorch.org/docs/stable/generated/torch.matmul.html)) is used all over the place in deep learning models. It is also common to use backpropagation to obtain the gradients of weights so we can update them using an optimiser. But how do we calculate those gradients for a simple matrix multiplication?
+Matrix multiplication ([matmul](https://pytorch.org/docs/stable/generated/torch.matmul.html)) is used all over the place in deep learning models, for example it's the basis of the [linear layer](https://pytorch.org/docs/stable/generated/torch.nn.Linear.html). It is also common to use backpropagation to obtain the gradients of weights so we can update them using an optimiser. But how do we calculate those gradients for a simple matrix multiplication?
 
-Ok, say we have:
+Lets say we have:
 
 
 $$
@@ -43,7 +43,7 @@ $$
 
 
 
-But hang on, what does it mean to differentiate a matrix by a matrix? What type of object is the quantity $\partial Y / \partial X$. Is it a matrix, vector or something else? Also, we need some sort of product rule or chain rule to proceed, but does that exist for matrix functions? 
+But hang on, what does it mean to differentiate a matrix by a matrix? What type of object is the quantity $\partial Y / \partial X$. Is it a matrix, vector or something else? Also, we need some sort of product rule or chain rule to proceed, but does that exist for matrix functions?
 
 ![Thinking meme](/assets/img/thinking_meme.jpg){: width="300" }
 
@@ -152,7 +152,7 @@ $$
 
 Notice how we sum over all components of $u$ as the indices $c$ and $d$ are dummy indices. Let now use everything we have learnt to finally derive the gradients of a matrix multiplication:
 
-### The backpropigated gradient of $X$
+### The backpropagated gradient of $X$
 
 We can start with the result we obtained above:
 
@@ -304,9 +304,9 @@ To obtain the backpropagated gradients, we can use PyTorch's `backward` method a
 
 ```python
 l.backward(inputs=(X, A, Y))
-X.grad # This is X's backpropigated grad from l
-A.grad # This is A's backpropigated grad from l
-Y.grad # This is Y's backpropigated grad from l
+X.grad # This is X's backpropagated grad from l
+A.grad # This is A's backpropagated grad from l
+Y.grad # This is Y's backpropagated grad from l
 ```
 
 Let's compare those grads with our derived equations above. So:
