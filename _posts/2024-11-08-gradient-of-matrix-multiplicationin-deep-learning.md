@@ -208,7 +208,7 @@ Therefore the gradient is calculated by multiplying the gradient of the loss $l$
 
 ### The backpropigated gradient of $A$
 
-We use the same procedure as above. First, obtain the derivative with respect to $A$ (we use new free indices for the derivative operator):
+We use the same procedure as above. First, obtain the derivative with respect to $A$:
 
 
 $$
@@ -235,7 +235,7 @@ $$
 
 
 
-We now want to convert this to matrix notation. However, we are summing the first axis of both components, so this can't be represented as a matrix multiplication. We use the same trick we used in the previous section and take the transpose of $\partial l / \partial y_{i p}$ to swap the index order and then convert this to matrix notation:
+We now want to convert this to matrix notation. However, we are summing the first axis of both components, so this can't be represented as a matrix multiplication. We use the same trick we used in the previous section and take the transpose of $x_{i p}$ to swap the index order and then convert this to matrix notation:
 
 
 $$
