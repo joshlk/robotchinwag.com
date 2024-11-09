@@ -123,7 +123,7 @@ I have glossed over many of the gory details, so if you want to have a deeper un
 
 ## Backpropigation
 
-![Enter the Tensor, meme](/assets/img/backprop_is_all_you_need_meme.jpg){: width="300" }
+![Backpropagation is all you need, meme](/assets/img/backprop_is_all_you_need_meme.jpg){: width="300" }
 
 In deep learning, we often optimise our models using backpropagation. I have a previous article on [how backpropagation works]({% link _posts/2024-05-02-backpropagation-and-multivariable-calculus.md %}), but essentially, we assume a function consumes the output of the function we are interested in, which calculates a scalar loss $l$. We are provided with the gradient of the loss with respect to the output of our function, and we need to calculate the gradient of the loss with respect to all inputs of our function. So we are provided with the gradient, which is a 2-dimensional tensor or matrix:
 
