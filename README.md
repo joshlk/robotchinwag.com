@@ -1,9 +1,11 @@
 # Source for blog https://robotchinwag.com
 
 <!-- * Website CMS/editor: https://app.pagescms.org/joshlk/robotchinwag.com -->
+* Theme is [chirpy](https://github.com/cotes2020/jekyll-theme-chirpy)
 * Analytics at: https://robotchinwag.goatcounter.com/
 * Comments stored using [utteranc](https://utteranc.es/) at repo: https://github.com/joshlk/robotchinwag_comments
 * Use [Typora](https://typora.io/) for editing markdown and VSCode otherwise
+* Sometimes the markdown pre-processor messes up math expressions. To avoid this you can surround a math expression with `{::nomarkdown}` and `{:/}`
 
 ## Dev setup
 
@@ -19,7 +21,7 @@ chruby 3.1.3
 gem install jekyll
 ```
 
-Dev, cd to dir:
+cd to dir:
 ```bash
 chruby 3.1.3
 bundle exec jekyll s
