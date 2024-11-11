@@ -22,6 +22,7 @@ This post explains how to calculate the gradients of layer normalisation used fo
 
 PyTorch defines the layer normalization operation for an input matrix $X$, with shape batch size $(B)$ by hidden size $(H)$, as:
 
+
 $$
 y=\frac{x-\mathrm{E}[x]}{\sqrt{\operatorname{Var}[x]+\epsilon}} * \gamma+\beta
 $$
@@ -29,6 +30,8 @@ $$
 Where the mean $\mathrm{E}[x]$ and variance $\operatorname{Var}[x]$ are calculated for each sample in a batch, and $\gamma$ and $\beta$ are learnable vector weights with lengths equal to the hidden size. $\epsilon$ is a constant usually equal to $1 \mathrm{e}-05$.
 
 [As shown previously]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#example-layer-normalisation-using-index-notation), we can represent this using index notation:
+
+
 $$
 \begin{aligned}
 m_{b} & =\frac{1}{H} \mathbf{1}_{h} x_{b h} \\
@@ -38,6 +41,7 @@ y_{b h} & =\frac{x_{b h}-\mathbf{1}_{h} m_{b}}{\sqrt{v_{b}+\epsilon}} \gamma_{h}
 $$
 
 To make the problem more manageable, we are going to define additional intermediate tensor functions $\mu_{b h}$ and $\sigma_{b}$:
+
 
 $$
 \begin{aligned}
