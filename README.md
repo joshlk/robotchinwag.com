@@ -6,6 +6,7 @@
 * Comments stored using [utteranc](https://utteranc.es/) at repo: https://github.com/joshlk/robotchinwag_comments
 * Use [Typora](https://typora.io/) for editing markdown and VSCode otherwise
 * Sometimes the markdown pre-processor messes up math expressions. To avoid this you can surround a math expression with `{::nomarkdown}` and `{:/}`
+* **Use VSCode to do a basic spellcheck of posts**
 
 ## Dev setup
 

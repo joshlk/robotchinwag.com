@@ -72,10 +72,10 @@ y_{i j} = x_{i k}a_{k j}
 $$
 
 
-We use lowercase symbols $y$, $x$ and $a$ which correspond to the elements of the matrixes $Y$, $X$ and $A$. The subscrips indicate which element we are specifying, e.g. $y_{i j} = [Y]_{i, j} $. When a subscript is repeated in an expression on the right-hand side and not included on the left-hand side of the equation, it is implicitly summed over its entire range and called a dummy index - so we can drop the summation sign. We also drop the "for all" bit and use lowercase indices $i$ and $j$ which implicitly corresponds to the ranges $[i,I]$ and $[1,J]$ respectively.
+We use lowercase symbols $y$, $x$ and $a$ which correspond to the elements of the matrices $Y$, $X$ and $A$. The subscripts indicate which element we are specifying, e.g. $y_{i j} = [Y]_{i, j} $. When a subscript is repeated in an expression on the right-hand side and not included on the left-hand side of the equation, it is implicitly summed over its entire range and called a dummy index - so we can drop the summation sign. We also drop the "for all" bit and use lowercase indices $i$ and $j$ which implicitly corresponds to the ranges $[i,I]$ and $[1,J]$ respectively.
 
 
-Working with the elements of the matrixes is easier as we can differentiate the expression using the tools we were taught at school. Let's go back to what we originally were interested in $\partial Y / \partial X$ - using index notation, we can express this as:
+Working with the elements of the matrices is easier as we can differentiate the expression using the tools we were taught at school. Let's go back to what we originally were interested in $\partial Y / \partial X$ - using index notation, we can express this as:
 
 
 $$
@@ -114,7 +114,7 @@ $$
 a_{k j}\frac{\partial x_{i k}}{\partial x_{p q}} = a_{k j}\delta_{i p}\delta_{k q}
 $$
 
-Theres a simplification we can make which is easier to see if we bring back the summation sign:
+We can simplify further, which is easier to see if we bring back the summation sign:
 
 
 $$
@@ -133,7 +133,7 @@ $$
 $$
 
 
-So, the derivative of $Y$ with respect to $X$ is equal to an element of $A$ only when $i$ and $p$ equal and otherwise zero. The above can't be expressed using matrix notation as the tensors are 4-dimensional, but once we use backpropagation (next section), the number of dimensions will reduce, and we will start to use matrixes again.
+So, the derivative of $Y$ with respect to $X$ is equal to an element of $A$ only when $i$ and $p$ equal and otherwise zero. The above can't be expressed using matrix notation as the tensors are 4-dimensional, but once we use backpropagation (next section), the number of dimensions will reduce, and we will start to use matrices again.
 
 I have glossed over many gory details, so I recommend reading my article on [The Tensor Calculus You Need For Deep Learning]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}).
 
@@ -149,7 +149,7 @@ $$
 $$
 
 
-and we want to obtain the gradient of the loss with respect to $X$ and $A$ which are both matrixes:
+and we want to obtain the gradient of the loss with respect to $X$ and $A$ which are both matrices:
 
 
 $$
@@ -192,7 +192,7 @@ $$
 $$
 
 
-We can then substitute the previous expression and simpyfy it using the rules of index notation:
+We can then substitute the previous expression and simplify it using the rules of index notation:
 
 
 $$
@@ -226,9 +226,9 @@ $$
 
 
 
-Therefore the gradient is calculated by multiplying the gradient of the loss $l$ with respect to the output $Y$ with the tranpose of the weights $A$.
+Therefore the gradient is calculated by multiplying the gradient of the loss $l$ with respect to the output $Y$ with the transpose of the weights $A$.
 
-### The backpropigated gradient of $A$
+### The backpropagated gradient of $A$
 
 We use the same procedure as above. First, obtain the derivative with respect to $A$:
 
