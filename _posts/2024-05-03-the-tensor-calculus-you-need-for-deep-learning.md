@@ -431,7 +431,7 @@ $$
 \frac{\partial y_{i \ldots j}}{\partial x_{a \ldots b}}=\frac{\partial x_{i \ldots j}}{\partial x_{a \ldots b}}
 $$
 
-- The derivative of a tensor with respect to itself is a product of Krockener deltas. For example, for an order-1 tensor:
+- The derivative of a tensor with respect to itself is a product of Kronecker deltas. For example, for an order-1 tensor:
 
 $$
 \frac{\partial x_{i}}{\partial x_{p}}=\delta_{i p}

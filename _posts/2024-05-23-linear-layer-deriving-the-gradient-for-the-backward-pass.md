@@ -69,7 +69,7 @@ $$
 \frac{\partial y_{i j}}{\partial x_{p q}} = \frac{\partial x_{i k} }{\partial x_{p q}} c_{k j}
 $$
 
-From the [rules of tensor calculus]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#tensor-derivative-operator), we know that the derivative of a variable with itself equals a product of Krockener deltas:
+From the [rules of tensor calculus]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#tensor-derivative-operator), we know that the derivative of a variable with itself equals a product of Kronecker deltas:
 
 $$
 \frac{\partial y_{i j}}{\partial x_{p q}} = \delta_{i p} \delta_{k q} c_{k j}
@@ -81,7 +81,7 @@ $$
 \frac{\partial y_{i j}}{\partial x_{p q}} = \delta_{i p} c_{q j}
 $$
 
-This is an order-4 tensor, i.e. a tensor with 4 dimensions, and so can't be expressed using matrix notation. However, the tensor is only non-zero when $i == p$ due to the Krockener delta. Fortunately, the gradient used for backpropagation is a lower-order tensor, and we can use matrix notation. To do that lets first assume $y_{i j}$ is an input of a scalar function $l$ and we are provided with the gradients of $l$ with respect to $y_{i j}$. Then to derive the gradients for backpropagation, we apply the chain rule:
+This is an order-4 tensor, i.e. a tensor with 4 dimensions, and so can't be expressed using matrix notation. However, the tensor is only non-zero when $i == p$ due to the Kronecker delta. Fortunately, the gradient used for backpropagation is a lower-order tensor, and we can use matrix notation. To do that lets first assume $y_{i j}$ is an input of a scalar function $l$ and we are provided with the gradients of $l$ with respect to $y_{i j}$. Then to derive the gradients for backpropagation, we apply the chain rule:
 
 $$
 \begin{aligned}
@@ -163,7 +163,7 @@ $$
 \end{aligned}
 $$
 
-Again, using the [rules of tensor calculus]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#tensor-derivative-operator), we know that the derivative of a variable with itself equals a product of Krockener deltas:
+Again, using the [rules of tensor calculus]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#tensor-derivative-operator), we know that the derivative of a variable with itself equals a product of Kronecker deltas:
 
 $$
 \frac{\partial y_{i j}}{\partial b_{p}} = \mathbf{1}_i \delta_{jp}
