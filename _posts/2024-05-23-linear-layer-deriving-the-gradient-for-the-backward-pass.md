@@ -49,7 +49,7 @@ $$
 y_{i j} = x_{i k}c_{k j} + \mathbf{1}_i b_j
 $$
 
-In the first expression, the $k$ index is repeated, meaning it's a dummy index and we sum over the multiplied components of $x_{i k}$ and $c_{k j}$. In the second expression, the one-tensor $ \mathbf{1}_i$ is used to broadcast the vector $b_j$ into a matrix so it has the correct shape to be added to the first expression.
+In the first expression, the $k$ index is repeated and not used on the left-hand side of the equation, meaning it's a [dummy index]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#dummy-indices) and we sum over the multiplied components of $x_{i k}$ and $c_{k j}$. In the second expression, the one-tensor $ \mathbf{1}_i$ is used to broadcast the vector $b_j$ into a matrix so it has the correct shape to be added to the first expression.
 
 ## Gradients of all the inputs
 
