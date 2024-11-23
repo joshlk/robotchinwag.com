@@ -20,7 +20,7 @@ math: true
 
 Here, I will derive the gradients of a matrix inverse used for backpropagation in deep learning models. I will use tensor calculus and index notation - see my article [The Tensor Calculus You Need for Deep Learning]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}) for more information.
 
-Given $Y=X^{-1}$, we know from the definition of an inverse matrix that $I=X X^{-1}=X Y$ (assuming $X$ is suqare and the inverse of $X$ exists). We convert this to index notation (the indices $i$, $j$ and $k$ must be the same size):
+Given $Y=X^{-1}$, we know from the definition of an inverse matrix that $I=X X^{-1}=X Y$ (assuming $X$ is square and the inverse of $X$ exists). We convert this to index notation (the indices $i$, $j$ and $k$ must be the same size):
 
 $$
 \delta_{i j}=x_{i k} y_{k j}
