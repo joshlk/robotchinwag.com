@@ -51,6 +51,8 @@ $$
 So the gradient of the inverse matrix with respect to itself is an order-4 tensor whereby every combination of elements of the inverse are multiplied together. This is similar to a [Kronecker product](https://en.wikipedia.org/wiki/Kronecker_product) but we don't "flatten" the result into 2 dimensions.
 
 Next, to obtain the gradient for backpropagation we assume $y_{i j}$ is an input of a scalar function $l$ and we are provided with the gradients of $l$ with respect to $y_{i j}$. Then to derive the gradients for backpropagation, we apply the chain rule:
+
+
 $$
 \begin{aligned}
 \frac{\partial l}{\partial x_{p q}} & =\frac{\partial l}{\partial y_{n j}} \frac{\partial y_{n j}}{\partial x_{p q}} \\
@@ -59,8 +61,9 @@ $$
 \end{aligned}
 $$
 
-And we can convert it back to matrix notation:
 
+
+And we can convert it back to matrix notation:
 $$
 \begin{aligned}
 {\left[\frac{\partial l}{\partial X}\right]_{p q} } & =-\left[Y^{T}\right]_{p n}\left[\frac{\partial l}{\partial Y}\right]_{n j}\left[Y^{T}\right]_{j q} \\
@@ -88,7 +91,8 @@ y = x.inverse()
 y.backward(dldy)
 
 # Calculate gradients using above equations
-# Note: I use brackets here to specify the order of the matmuls so it is the same as PyTorch
+# Note: I use brackets to specify the order of the matmuls
+# to be consistent with how PyTorch calculate it
 dldx = -y.T @ (dldy @ y.T)
 
 # Compare with PyTorch

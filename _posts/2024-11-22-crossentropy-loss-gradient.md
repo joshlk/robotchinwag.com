@@ -1,5 +1,5 @@
 ---
-title: "Cross-entropy loss (softmax and negative log-likelihood loss) gradient for deep learning"
+title: "Cross-Entropy Loss Gradient Used In Deep Learning"
 description: >-
   Obtaining the gradient of the Cross-entropy loss (softmax and negative log-likelihood loss function
 #author: Josh Levy-Kramer
@@ -23,6 +23,8 @@ math: true
 [Cross-entropy](https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html) is a common loss used for classification tasks in deep learning - including transformers. It is defined as the [softmax](https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html) function followed by the [negative log-likelihood loss](https://pytorch.org/docs/stable/generated/torch.nn.NLLLoss.html). Here, I will walk through how to derive the gradient of the cross-entropy loss used for the backward pass when training a model. I will use tensor calculus and index notation - see my article [The Tensor Calculus You Need for Deep Learning]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}) for more information.
 
 Say we have an input vector of logits $\hat{x}$ and vector of target classes $\hat{s}$, we can define the cross-entropy loss using index notation:
+
+
 $$
 \begin{aligned}
 s_{i} & =\frac{e^{x_{i}}}{\mathbf{1}_{j} e^{x_{j}}} \\
@@ -100,7 +102,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
-# Create random input
+# Create random inputs
 torch.manual_seed(42)
 N = 128
 num_classes = 256
