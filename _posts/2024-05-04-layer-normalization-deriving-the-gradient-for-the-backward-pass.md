@@ -269,7 +269,7 @@ $$
 
 ## PyTorch Implementation
 
-We can numerically check the above result by implementing the equations in PyTorch and numerically comparing the result to the built-in PyTorch function:
+We can numerically check the above result by implementing the equations in PyTorch and comparing the result to the built-in PyTorch function:
 
 ```python
 import torch

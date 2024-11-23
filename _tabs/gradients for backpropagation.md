@@ -19,10 +19,10 @@ Other examples of using tensor calculus to calculate gradients:
 
 * [Linear layer]({% link _posts/2024-05-23-linear-layer-deriving-the-gradient-for-the-backward-pass.md %})
 * [Element-wise or pointwise functions]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#example-element-wise-functions)
-* [Matrix multiplication]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#example-matrix-multiplication)
-* [Inverse of matrix]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#example-matrix-inverse)
-* [Cross-Entropy Loss]({% link _posts/2024-05-03-the-tensor-calculus-you-need-for-deep-learning.md %}#example-cross-entropy-loss)
+* [Matrix multiplication]({% link _posts/2024-11-08-gradient-of-matrix-multiplicationin-deep-learning.md %})
+* [Cross-Entropy Loss]({% link _posts/2024-11-22-crossentropy-loss-gradient.md %})
 * [Layer Normalization]({% link _posts/2024-05-04-layer-normalization-deriving-the-gradient-for-the-backward-pass.md %})
+* [Inverse of matrix]({% link _posts/2024-11-22-maxtrix-inverse-gradient.md %})
 
 ## Why is this Series Needed?
 

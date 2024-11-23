@@ -610,130 +610,14 @@ $$
 \end{aligned}
 $$
 
-## Example: Matrix Inverse
-
-Given $Y=X^{-1}$, we know from the definition of an inverse matrix that $I=X X^{-1}=X Y$ (assuming the inverse of $X$ exists). We convert this to index notation:
-
-$$
-\delta_{i j}=x_{i k} y_{k j}
-$$
-
-First, we find the derivative with respect to $X$ and use the product rule:
-
-$$
-\begin{align*}
-\frac{\partial \delta_{ij}}{\partial x_{pq}} &= \frac{\partial x_{ik}y_{kj}}{\partial x_{pq}} &\;\;\textrm{(no sum i, j, p, q)} \\ 
-0 &= \frac{\partial x_{ik}}{\partial x_{pq}}y_{kj} + x_{ik}\frac{\partial y_{kj}}{\partial x_{pq}} \\ 
-0 &= \delta_{ip}\delta_{kq}y_{kj} + x_{ik}\frac{\partial y_{kj}}{\partial x_{pq}} \\ 
-0 &= \delta_{ip}y_{qj} + x_{ik}\frac{\partial y_{kj}}{\partial x_{pq}} \\ 
-x_{ik}\frac{\partial y_{kj}}{\partial x_{pq}} &= -\delta_{ip}y_{qj}
-\end{align*}
-$$
-
-We then multiply by the inverse matrix $y_{n i}$, we must use a new free index $n$ for the first axis and contract on the second axis $i$:
-
-$$
-\begin{aligned}
-y_{n i} x_{i k} \frac{\partial y_{k j}}{\partial x_{p q}} & =-y_{n i} \delta_{i p} y_{q j} \\
-\delta_{n k} \frac{\partial y_{k j}}{\partial x_{p q}} & =-y_{n p} y_{q j} \\
-\frac{\partial y_{n j}}{\partial x_{p q}} & =-y_{n p} y_{q j}
-\end{aligned}
-$$
-
-Secondly, we derive the backpropagated gradient using the chain rule:
-
-$$
-\begin{aligned}
-\frac{\partial l}{\partial x_{p q}} & =\frac{\partial l}{\partial y_{n j}} \frac{\partial y_{n j}}{\partial x_{p q}} \\
-& =\frac{\partial l}{\partial y_{n j}}\left(-y_{n p} y_{q j}\right) \\
-& =-y_{n p} \frac{\partial l}{\partial y_{n j}} y_{q j}
-\end{aligned}
-$$
-
-And we can convert it back to matrix notation:
-
-$$
-\begin{aligned}
-{\left[\frac{\partial l}{\partial X}\right]_{p q} } & =-\left[Y^{T}\right]_{p n}\left[\frac{\partial l}{\partial Y}\right]_{n j}\left[Y^{T}\right]_{j q} \\
-\frac{\partial l}{\partial X} & =-\left(X^{-1}\right)^{T} \frac{\partial l}{\partial Y}\left(X^{-1}\right)^{T}
-\end{aligned}
-$$
-
-## Example: Cross-Entropy Loss
-
-The cross-entropy loss is the softmax followed by the negative log-likelihood loss. Provided an input vector $\hat{x}$ of logits:
-
-$$
-\begin{aligned}
-s_{i} & =\frac{e^{x_{i}}}{\mathbf{1}_{j} e^{x_{j}}} \\
-c & =-\log s_{T}
-\end{aligned}
-$$
-
-Where $s_{i}$ is a vector of softmax values, and $c$ is the scalar cross-entropy loss. $T$ is the index corresponding to the target label. Note that $T$ is a constant and not a free or dummy index.
-
-First, we need to derive the Jacobian tensor of the function. Let's start with the denominator in the softmax:
-
-$$
-\begin{aligned}
-\sigma & =\mathbf{1}_{j} e^{x_{j}} \\
-\frac{\partial \sigma}{\partial x_{n}} & =\mathbf{1}_{j} \frac{\partial e^{x_{j}}}{\partial x_{n}} \\
-& =\mathbf{1}_{j} \frac{\partial e^{x_{j}}}{\partial x_{j}} \frac{\partial x_{j}}{\partial x_{n}} \\
-& =\mathbf{1}_{j} e^{x_{j}} \delta_{j n} \\
-& =e^{x_{n}}
-\end{aligned}
-$$
-
-Notice that we can drop $$ \mathbf{1}_{n} $$ as $n$ is a free index, and $$ \mathbf{1}_{n} $$ equals 1 .
-
-To differentiate the softmax tensor with respect to $x$, we use the quotient rule and simplify the expression by reusing the definition of the softmax:
-
-$$
-\begin{aligned}
-\frac{\partial s_{i}}{\partial x_{n}} & =\frac{1}{\sigma^{2}}\left(\frac{\partial e^{x_{i}}}{\partial x_{n}} \sigma-e^{x_{i}} \frac{\partial \sigma}{\partial x_{n}}\right) \\
-& =\frac{1}{\sigma^{2}}\left(e^{x_{i}} \delta_{i n} \sigma-e^{x_{i}} e^{x_{n}}\right) \\
-& =s_{i} \delta_{i n}-s_{i} s_{n}
-\end{aligned}
-$$
-
-And we move on to the negative log-likelihood loss:
-
-$$
-\begin{aligned}
-\frac{\partial c}{\partial s_{i}} & =-\frac{\partial \log s_{T}}{\partial s_{i}} \\
-& =-\frac{1}{s_{T}} \delta_{i T}
-\end{aligned}
-$$
-
-Note that as $T$ is a constant, not a dummy index, the expression is $-1 / s_{T}$ when $i=T$ and zero otherwise (it is not a summation).
-
-Putting the two expressions together to get the complete gradient:
-
-$$
-\begin{aligned}
-\frac{\partial c}{\partial x_{n}} & =\frac{\partial c}{\partial s_{i}} \frac{\partial s_{i}}{\partial x_{n}} \\
-& =\left(-\frac{1}{s_{T}} \delta_{i T}\right)\left(s_{i} \delta_{i n}-s_{i} s_{n}\right) \\
-& =-\frac{1}{s_{T}}\left(s_{T} \delta_{T n}-s_{T} s_{n}\right) \\
-& =s_{n}-\delta_{T n}
-\end{aligned}
-$$
-
-It's interesting to note that because of the influence of normalizing all values by $\sigma$, all logits have a non-zero gradient even if they do not correspond to the true label.
-
-Then, deriving the backpropagated gradient is trivial:
-
-$$
-\begin{aligned}
-\frac{\partial l}{\partial x_{n}} & =\frac{\partial l}{\partial c} \frac{\partial c}{\partial x_{n}} \\
-& =\frac{\partial l}{\partial c}\left(s_{n}-\delta_{T_{n}}\right)
-\end{aligned}
-$$
-
-It might be the case that we start backpropagation using the cross-entropy loss, in that case $l=c$ and $\partial l / \partial c=1$.
-
 ## Next
 
-The [next part]({% link _posts/2024-05-04-layer-normalization-deriving-the-gradient-for-the-backward-pass.md %}) of the series looks into applying these techniques to a more difficult function, layer normalisation.
+Other examples of using tensor calculus to calculate gradients:
+
+* [Linear layer]({% link _posts/2024-05-23-linear-layer-deriving-the-gradient-for-the-backward-pass.md %})
+* [Layer Normalization]({% link _posts/2024-05-04-layer-normalization-deriving-the-gradient-for-the-backward-pass.md %})
+* [Cross-Entropy Loss]({% link _posts/2024-11-22-crossentropy-loss-gradient.md %})
+* [Inverse of matrix]({% link _posts/2024-11-22-maxtrix-inverse-gradient.md %})
 
 ## References
 
