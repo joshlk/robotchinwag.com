@@ -617,6 +617,7 @@ Other examples of using tensor calculus to calculate gradients:
 * [Linear layer]({% link _posts/2024-05-23-linear-layer-deriving-the-gradient-for-the-backward-pass.md %})
 * [Layer Normalization]({% link _posts/2024-05-04-layer-normalization-deriving-the-gradient-for-the-backward-pass.md %})
 * [Cross-Entropy Loss]({% link _posts/2024-11-22-crossentropy-loss-gradient.md %})
+* [Einsum]({% link _posts/2024-11-23-einsum-gradient.md %})
 * [Inverse of matrix]({% link _posts/2024-11-22-maxtrix-inverse-gradient.md %})
 
 ## References

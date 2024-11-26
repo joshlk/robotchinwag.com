@@ -112,7 +112,7 @@ torch.testing.assert_close(dldx, x.grad)
 
 ## General PyTorch Implementation
 
-We can generalise the result for any two random input tensors and einsum expression:
+We can generalise the result. First lets generate two random input tensors and a random einsum expression:
 
 ```python
 import torch
@@ -149,8 +149,14 @@ x = torch.rand(size=[sizes[idx] for idx in x_idx_order], requires_grad=True, dty
 y = torch.rand(size=[sizes[idx] for idx in y_idx_order], requires_grad=True, dtype=torch.float32)
 dldz = torch.rand(size=[sizes[idx] for idx in z_idx_order], dtype=torch.float32)
 
-# Calculate z using einsum
+# Create einsum expression
 z_eignsum_equation = ''.join(x_idx_order) + ',' + ''.join(y_idx_order) + '->' + ''.join(z_idx_order)
+```
+
+Now let's run einsum to obtain the output, use the equations above to calculate the gradients and compare the results with PyTorch.
+
+```python
+# Run einsum to obtain output z
 z = torch.einsum(z_eignsum_equation, x, y)
 
 # Obtain the gradients using autograd
