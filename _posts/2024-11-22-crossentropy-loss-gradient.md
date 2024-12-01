@@ -1,5 +1,5 @@
 ---
-title: "Cross-Entropy Loss Gradient Used In Deep Learning"
+title: "Cross-Entropy Loss (Softmax) Gradient Used In Deep Learning"
 description: >-
   Obtaining the gradient of the Cross-entropy loss (softmax and negative log-likelihood loss function
 #author: Josh Levy-Kramer
