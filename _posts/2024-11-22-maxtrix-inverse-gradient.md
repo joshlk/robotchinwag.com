@@ -64,6 +64,8 @@ $$
 
 
 And we can convert it back to matrix notation:
+
+
 $$
 \begin{aligned}
 {\left[\frac{\partial l}{\partial X}\right]_{p q} } & =-\left[Y^{T}\right]_{p n}\left[\frac{\partial l}{\partial Y}\right]_{n j}\left[Y^{T}\right]_{j q} \\
