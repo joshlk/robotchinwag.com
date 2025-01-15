@@ -14,7 +14,7 @@ tags:
   - gradients
   - tensor calculus
   - parallelism
-pin: false
+pin: true
 math: true
 ---
 
