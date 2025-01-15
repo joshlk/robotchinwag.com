@@ -14,7 +14,7 @@ tags:
   - backpropagation
   - tensor calculus
   - index notation
-pin: false
+pin: true
 math: true
 ---
 
