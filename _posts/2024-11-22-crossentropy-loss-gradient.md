@@ -75,8 +75,8 @@ $$
 \begin{aligned}
 \frac{\partial c}{\partial x_{n}} & =\frac{\partial c}{\partial s_{i}} \frac{\partial s_{i}}{\partial x_{n}} \\
 & =\left(-\frac{1}{s_{T}} \delta_{i T}\right)\left(s_{i} \delta_{i n}-s_{i} s_{n}\right) \\
-& =-\frac{1}{s_{T}}\left(s_{T} \delta_{T n}-s_{T} s_{n}\right) \\
-& =s_{n}-\delta_{T n}
+& =-\frac{1}{s_{T}}\left(s_{T} \delta_{n T}-s_{T} s_{n}\right) \\
+& =s_{n}-\delta_{n T}
 \end{aligned}
 $$
 
@@ -87,7 +87,7 @@ Then, deriving the backpropagated gradient is trivial:
 $$
 \begin{aligned}
 \frac{\partial l}{\partial x_{n}} & =\frac{\partial l}{\partial c} \frac{\partial c}{\partial x_{n}} \\
-& =\frac{\partial l}{\partial c}\left(s_{n}-\delta_{T_{n}}\right)
+& =\frac{\partial l}{\partial c}\left(s_{n}-\delta_{n T}\right)
 \end{aligned}
 $$
 
