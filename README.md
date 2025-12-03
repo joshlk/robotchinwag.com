@@ -33,7 +33,7 @@ To check build:
 make build_and_test
 ```
 
-Use [this guide]([img_path](https://github.com/cotes2020/jekyll-theme-chirpy/wiki/Upgrade-Guide#upgrade-from-starter)) update the theme version. You will need to look at the diff and accomidate any changes (don't do it unless you have to).
+Use [this guide](https://github.com/cotes2020/jekyll-theme-chirpy/wiki/Upgrade-Guide#upgrade-from-starter) update the theme version. You will need to look at the diff and accommodate any changes (don't do it unless you have to).
 
 To update the template file:
 ```bash
