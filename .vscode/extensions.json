@@ -1,5 +1,3 @@
 {
-    "recommendations": [
-        "eliostruyf.vscode-front-matter"
-    ]
+  "recommendations": ["ms-vscode-remote.remote-containers"]
 }
