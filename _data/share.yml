@@ -16,9 +16,9 @@ platforms:
 
   # Uncomment below if you need to.
   #
-  - type: Linkedin
-    icon: "fab fa-linkedin"
-    link: "https://www.linkedin.com/in/joshlevykramer"
+  #- type: Linkedin
+  #  icon: "fab fa-linkedin"
+  #  link: "https://www.linkedin.com/in/"
   #
   # - type: Weibo
   #   icon: "fab fa-weibo"
