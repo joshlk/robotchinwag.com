@@ -10,4 +10,3 @@ Hey 👋, I am Josh Levy-Kramer, an AI Engineer working in London, UK. My curren
 Profiles:
 
 * [GitHub](https://github.com/joshlk)
-* [LinkedIn](https://www.linkedin.com/in/joshlevykramer)
