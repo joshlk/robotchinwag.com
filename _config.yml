@@ -107,6 +107,24 @@ social_preview_image: # string, local or CORS resources
 # boolean type, the global switch for TOC in posts.
 toc: true
 
+# Math equation rendering engine.
+#   mathjax — client-side rendering (theme default, loads JS in the browser)
+#   katex   — server-side rendering at build time via the jektex plugin (no JS)
+# Used by the local _includes/{head,js-selector}.html overrides.
+math:
+  engine: katex
+
+# Jektex (server-side KaTeX) configuration › https://github.com/yagarea/jektex
+# Math is written with kramdown's `$$ ... $$` delimiters; the local plugin
+# `_plugins/katex-inline-math.rb` also upgrades single-`$` inline math on
+# pages with `math: true` so existing posts keep working.
+jektex:
+  cache_dir: ".jektex-cache"
+  # Skip non-content output (feeds, manifests, generated JS/CSS templates).
+  ignore: ["*.xml", "*.json", "*.js", "*.scss", "*.css", "*.txt"]
+  silent: false
+  macros: []
+
 comments:
   # Global switch for the post comment system. Keeping it empty means disabled.
   provider: giscus # [disqus | utterances | giscus]
