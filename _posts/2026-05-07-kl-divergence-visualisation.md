@@ -27,7 +27,7 @@ For two probability distributions $P$ and $Q$ over the same space, the Kullback�
 
 $$D_{\mathrm{KL}}(P \,\|\, Q) = \int p(x) \log \frac{p(x)}{q(x)} \, dx$$
 
-It measures the cost — in nats, if you use the natural log — of describing samples from $P$ using a code optimised for $Q$.
+It measures how badly $Q$ approximates $P$, weighted by where $P$ actually puts its mass. Disagreements in regions $P$ considers likely count a lot; disagreements in regions $P$ considers unlikely barely count at all.
 
 The lower plot shows the integrand $p(x)\log(p(x)/q(x))$ — the pointwise contribution. It can go negative where $Q$ exceeds $P$; only the signed area is guaranteed non-negative.
 
