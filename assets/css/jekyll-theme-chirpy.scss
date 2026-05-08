@@ -60,3 +60,11 @@ li.nav-item:nth-child(5) {
 td ul li {
     white-space: break-spaces;
 }
+
+/* KaTeX (server-side rendered via jektex) — let wide equations scroll
+   horizontally instead of overflowing the post column. Mirrors the theme's
+   mjx-container handling for MathJax. */
+.katex-display {
+    overflow: auto hidden;
+    padding: 0.25rem 0; /* room so descenders/ascenders aren't clipped by the scroll box */
+}
