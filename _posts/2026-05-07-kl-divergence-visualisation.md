@@ -40,7 +40,7 @@ $$D_{\mathrm{KL}}(P \,\|\, Q) = \int p(x) \log \frac{p(x)}{q(x)} \, dx$$
 
 It measures how badly $Q$ approximates $P$, weighted by where $P$ actually puts its mass. Disagreements in regions $P$ considers likely count a lot; disagreements in regions $P$ considers unlikely barely count at all.
 
-in the visualisation you control two skew-normal distributions, $P$ and $Q$, each with four sliders:
+In the visualisation you control two skew-normal distributions, $P$ and $Q$, each with four sliders:
 
 - **Mean** — shifts the distribution left/right.
 - **Std** — widens or narrows it.
@@ -54,7 +54,9 @@ The upper plot draws the two densities. The lower plot draws the **integrand** $
 Things worth playing with:
 
 - **Asymmetry.** Narrow $Q$ with $P$ fixed and watch $D_{\mathrm{KL}}(P \,\|\, Q)$ explode, while $D_{\mathrm{KL}}(Q \,\|\, P)$ stays small. This is why the direction matters: minimising $D_{\mathrm{KL}}(Q \,\|\, P)$ is *mode-seeking* ($Q$ hides in one mode), minimising $D_{\mathrm{KL}}(P \,\|\, Q)$ is *mode-covering* ($Q$ must cover all of $P$).
-- **Support.** Truncate $Q$ so it's exactly zero somewhere $P$ has mass, and $D_{\mathrm{KL}}(P \,\|\, Q) \to \infty$. This is the absolute-continuity condition that's usually glossed over — and why KL fails for disjoint distributions, motivating Jensen–Shannon and Wasserstein.
+- **Support.** Truncate $Q$ so it's exactly zero somewhere $P$ has mass, and $D_{\mathrm{KL}}(P \,\|\, Q) \to \infty$. This is the absolute-continuity condition that's usually glossed over — and why KL fails for disjoint distributions, motivating [Jensen–Shannon]({% post_url 2026-05-10-jensen-shannon-divergence-visualisation %}) and Wasserstein.
 - **Discretisation.** Turn the bins on and KL drops, because binning destroys information (the data-processing inequality). As bin width $\to 0$, the discrete sum recovers the continuous integral.
 
 If you've trained a classifier, you've minimised a KL divergence: **cross-entropy loss** is $D_{\mathrm{KL}}(P_{\text{data}} \,\|\, Q_{\text{model}})$ plus a constant entropy term.
+
+For the symmetric, always-finite cousin of KL — the one that doesn't blow up on disjoint distributions — see the follow-up: [interactive Jensen–Shannon divergence visualisation]({% post_url 2026-05-10-jensen-shannon-divergence-visualisation %}).

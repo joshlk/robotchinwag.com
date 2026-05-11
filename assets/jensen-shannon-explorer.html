@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jensen–Shannon divergence explorer</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f5f4ef;
+    --text: #1a1a1a;
+    --text-secondary: #6b6b6b;
+    --border: rgba(0, 0, 0, 0.15);
+    --radius: 8px;
+    --p-color: #185FA5;
+    --q-color: #993C1D;
+    --js-color: #3f7a3f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a1a;
+      --bg-secondary: #262626;
+      --text: #f0f0f0;
+      --text-secondary: #a0a0a0;
+      --border: rgba(255, 255, 255, 0.18);
+      --p-color: #4a9eff;
+      --q-color: #e8825c;
+      --js-color: #6fbf6f;
+    }
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 1rem; box-sizing: border-box; }
+  .stat-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 0.5rem; }
+  .stat { background: var(--bg-secondary); border-radius: var(--radius); padding: 0.75rem 1rem; }
+  .stat-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
+  .stat-value { font-size: 24px; font-weight: 500; }
+  .bar { height: 5px; border-radius: 3px; background: var(--border); margin-top: 8px; overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--js-color); width: 0%; transition: width 0.05s linear; }
+  .plot-wrap { position: relative; }
+  .plot-tall { height: 280px; }
+  .plot-short { height: 150px; margin-bottom: 1.25rem; }
+  canvas { width: 100%; height: 100%; display: block; }
+  .controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+  @media (max-width: 560px) { .controls { grid-template-columns: 1fr; } }
+  .control-title { font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+  .p-title { color: var(--p-color); }
+  .q-title { color: var(--q-color); }
+  .slider-grid { display: grid; grid-template-columns: 70px 1fr 40px; gap: 8px; align-items: center; font-size: 13px; }
+  .slider-grid label { color: var(--text-secondary); }
+  .slider-grid span { text-align: right; font-variant-numeric: tabular-nums; }
+  .discretise-box { background: var(--bg-secondary); border-radius: var(--radius); padding: 0.75rem 1rem; margin-top: 1rem; }
+  .discretise-grid { display: grid; grid-template-columns: 90px 1fr 60px; gap: 8px; align-items: center; font-size: 13px; }
+  .discretise-grid label { color: var(--text-secondary); }
+  .discretise-grid span { text-align: right; font-variant-numeric: tabular-nums; }
+  .presets { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1rem; }
+  button {
+    background: transparent;
+    color: var(--text);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 6px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  button:hover { background: var(--bg-secondary); }
+  input[type="range"] { width: 100%; accent-color: var(--text-secondary); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="stat-row">
+    <div class="stat">
+      <div class="stat-label">JSD(P, Q)</div>
+      <div id="jsd" class="stat-value">&mdash;</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">fraction of max (ln 2 &asymp; 0.693 nats)</div>
+      <div id="jsd-frac" class="stat-value">&mdash;</div>
+      <div class="bar"><div id="jsd-bar" class="bar-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="plot-wrap plot-tall"><canvas id="plot"></canvas></div>
+  <div class="plot-wrap plot-short"><canvas id="plot2"></canvas></div>
+
+  <div class="controls">
+    <div>
+      <div class="control-title p-title">Distribution P</div>
+      <div class="slider-grid">
+        <label>Mean</label>
+        <input type="range" id="p-mean" min="-5" max="5" step="0.1" value="-1">
+        <span id="p-mean-out">-1.0</span>
+        <label>Std</label>
+        <input type="range" id="p-std" min="0.3" max="3" step="0.1" value="1">
+        <span id="p-std-out">1.0</span>
+        <label>Skew</label>
+        <input type="range" id="p-skew" min="-8" max="8" step="0.2" value="0">
+        <span id="p-skew-out">0.0</span>
+        <label>Truncate</label>
+        <input type="range" id="p-trunc" min="0.3" max="10" step="0.1" value="10">
+        <span id="p-trunc-out">&infin;</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="control-title q-title">Distribution Q</div>
+      <div class="slider-grid">
+        <label>Mean</label>
+        <input type="range" id="q-mean" min="-5" max="5" step="0.1" value="1">
+        <span id="q-mean-out">1.0</span>
+        <label>Std</label>
+        <input type="range" id="q-std" min="0.3" max="3" step="0.1" value="1.2">
+        <span id="q-std-out">1.2</span>
+        <label>Skew</label>
+        <input type="range" id="q-skew" min="-8" max="8" step="0.2" value="0">
+        <span id="q-skew-out">0.0</span>
+        <label>Truncate</label>
+        <input type="range" id="q-trunc" min="0.3" max="10" step="0.1" value="10">
+        <span id="q-trunc-out">&infin;</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="discretise-box">
+    <div class="discretise-grid">
+      <label>Discretise</label>
+      <input type="range" id="bin-w" min="0" max="2.5" step="0.05" value="0">
+      <span id="bin-w-out">off</span>
+    </div>
+  </div>
+
+  <div class="presets">
+    <button onclick="preset('identical')">Identical</button>
+    <button onclick="preset('shift')">Shifted</button>
+    <button onclick="preset('wider')">Q wider</button>
+    <button onclick="preset('narrower')">Q narrower</button>
+    <button onclick="preset('skewed')">Skewed P</button>
+    <button onclick="preset('disjoint')">Nearly disjoint</button>
+    <button onclick="preset('q-truncated')">Q truncated</button>
+    <button onclick="preset('coarse-bins')">Coarse bins</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const X_MIN = -10, X_MAX = 10, N = 1000;
+  const xs = Array.from({length: N}, (_, i) => X_MIN + (X_MAX - X_MIN) * i / (N - 1));
+  const dx = (X_MAX - X_MIN) / (N - 1);
+  const TRUNC_INF = 9.95;
+  const LN2 = Math.log(2);
+
+  function getColors(){
+    const cs = getComputedStyle(document.documentElement);
+    return {
+      text: cs.getPropertyValue('--text-secondary').trim() || '#888',
+      border: cs.getPropertyValue('--border').trim() || 'rgba(0,0,0,0.15)',
+      p: cs.getPropertyValue('--p-color').trim() || '#185FA5',
+      q: cs.getPropertyValue('--q-color').trim() || '#993C1D',
+      js: cs.getPropertyValue('--js-color').trim() || '#3f7a3f'
+    };
+  }
+
+  function phi(z){ return Math.exp(-0.5*z*z) / Math.sqrt(2*Math.PI); }
+  function Phi(z){
+    const t = 1 / (1 + 0.2316419 * Math.abs(z));
+    const d = 0.3989422804 * Math.exp(-z*z/2);
+    let p = d * t * (0.31938153 + t*(-0.356563782 + t*(1.781477937 + t*(-1.821255978 + t*1.330274429))));
+    return z > 0 ? 1 - p : p;
+  }
+  function skewNormalPdf(x, mu, sigma, alpha){
+    const z = (x - mu) / sigma;
+    return (2 / sigma) * phi(z) * Phi(alpha * z);
+  }
+
+  function pdfArray(mu, sigma, alpha, trunc){
+    const arr = new Float64Array(N);
+    const lo = mu - trunc, hi = mu + trunc;
+    let sum = 0;
+    for (let i = 0; i < N; i++){
+      const x = xs[i];
+      let v;
+      if (x < lo || x > hi) v = 0;
+      else { v = skewNormalPdf(x, mu, sigma, alpha); if (v === 0) v = Number.MIN_VALUE; }
+      arr[i] = v; sum += v;
+    }
+    const norm = sum * dx;
+    if (norm > 0) for (let i = 0; i < N; i++) arr[i] /= norm;
+    return arr;
+  }
+
+  function binPdf(P, w){
+    const kMin = Math.floor((X_MIN / w) - 0.5);
+    const kMax = Math.ceil((X_MAX / w) + 0.5);
+    const nb = kMax - kMin + 1;
+    const probs = new Float64Array(nb);
+    const edges = new Float64Array(nb + 1);
+    for (let b = 0; b <= nb; b++) edges[b] = (kMin + b - 0.5) * w;
+    for (let i = 0; i < N; i++){
+      let b = Math.floor((xs[i] - edges[0]) / w);
+      if (b < 0) b = 0; if (b >= nb) b = nb - 1;
+      probs[b] += P[i] * dx;
+    }
+    return {probs, edges, w};
+  }
+
+  // Per-point Jensen-Shannon contribution: 1/2 p log(p/m) + 1/2 q log(q/m), m = (p+q)/2.
+  // Always >= 0 (log-sum inequality) and always finite -- the mixture m is zero only
+  // where both p and q are zero.
+  function jsIntegrand(P, Q){
+    const arr = new Float64Array(N);
+    for (let i = 0; i < N; i++){
+      const p = P[i], q = Q[i];
+      const m = 0.5 * (p + q);
+      let v = 0;
+      if (p > 0 && m > 0) v += 0.5 * p * Math.log(p / m);
+      if (q > 0 && m > 0) v += 0.5 * q * Math.log(q / m);
+      arr[i] = Math.max(v, 0);
+    }
+    return arr;
+  }
+  function jsdFromIntegrand(I){
+    let s = 0;
+    for (let i = 0; i < N; i++) s += I[i] * dx;
+    return Math.max(s, 0);
+  }
+
+  function discreteJS(Pb, Qb){
+    const nb = Pb.probs.length;
+    const contribs = new Float64Array(nb);
+    let jsd = 0;
+    for (let b = 0; b < nb; b++){
+      const p = Pb.probs[b], q = Qb.probs[b];
+      const m = 0.5 * (p + q);
+      let a = 0, c = 0;
+      if (p > 0 && m > 0) a = 0.5 * p * Math.log(p / m);
+      if (q > 0 && m > 0) c = 0.5 * q * Math.log(q / m);
+      contribs[b] = a + c; jsd += a + c;
+    }
+    return {jsd: Math.max(jsd, 0), contribs};
+  }
+
+  function niceStep(range, target){
+    if (range <= 0) return 1;
+    const raw = range / target;
+    const pow = Math.pow(10, Math.floor(Math.log10(raw)));
+    const norm = raw / pow;
+    let step;
+    if (norm < 1.5) step = 1;
+    else if (norm < 3) step = 2;
+    else if (norm < 7) step = 5;
+    else step = 10;
+    return step * pow;
+  }
+  function setup(canvas){
+    const ctx = canvas.getContext('2d');
+    const r = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = r.width * dpr; canvas.height = r.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return {ctx, w: r.width, h: r.height};
+  }
+  function drawXAxis(ctx, pad, plotW, plotH, c, showLabels){
+    ctx.strokeStyle = c.border; ctx.fillStyle = c.text;
+    ctx.font = '11px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    for (let xv = -10; xv <= 10; xv += 2){
+      const px = pad.l + ((xv - X_MIN) / (X_MAX - X_MIN)) * plotW;
+      if (showLabels) ctx.fillText(String(xv), px, pad.t + plotH + 6);
+      ctx.beginPath(); ctx.moveTo(px, pad.t + plotH); ctx.lineTo(px, pad.t + plotH + 3); ctx.stroke();
+    }
+  }
+  function drawYAxis(ctx, pad, plotW, plotH, yMin, yMax, c, label){
+    const range = yMax - yMin;
+    const step = niceStep(range, 4);
+    const start = Math.ceil(yMin / step) * step;
+    ctx.strokeStyle = c.border; ctx.fillStyle = c.text;
+    ctx.font = '11px sans-serif'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    for (let yv = start; yv <= yMax + 1e-9; yv += step){
+      const py = pad.t + plotH - ((yv - yMin) / range) * plotH;
+      const lbl = Math.abs(yv) < 1e-9 ? '0' : (Math.abs(yv) < 1 ? yv.toFixed(2) : yv.toFixed(1));
+      ctx.fillText(lbl, pad.l - 6, py);
+      ctx.beginPath(); ctx.moveTo(pad.l - 3, py); ctx.lineTo(pad.l, py); ctx.stroke();
+      if (Math.abs(yv) > 1e-9){
+        ctx.save(); ctx.globalAlpha = 0.4;
+        ctx.beginPath(); ctx.moveTo(pad.l, py); ctx.lineTo(pad.l + plotW, py); ctx.stroke();
+        ctx.restore();
+      }
+    }
+    ctx.save();
+    ctx.translate(14, pad.t + plotH / 2); ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(label, 0, 0);
+    ctx.restore();
+  }
+  function xToPx(x, pad, plotW){ return pad.l + ((x - X_MIN) / (X_MAX - X_MIN)) * plotW; }
+
+  function hexToRgba(hex, a){
+    const h = hex.replace('#','');
+    const r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16);
+    return `rgba(${r},${g},${b},${a})`;
+  }
+
+  function drawTopPlot(P, Q, binW, Pb, Qb){
+    const canvas = document.getElementById('plot');
+    const {ctx, w, h} = setup(canvas);
+    const pad = {l: 50, r: 12, t: 12, b: 28};
+    const plotW = w - pad.l - pad.r, plotH = h - pad.t - pad.b;
+    ctx.clearRect(0, 0, w, h);
+    const c = getColors();
+
+    let yMax;
+    if (binW > 0){
+      let mx = 0;
+      for (const v of Pb.probs) mx = Math.max(mx, v / binW);
+      for (const v of Qb.probs) mx = Math.max(mx, v / binW);
+      yMax = mx * 1.1 || 0.5;
+    } else yMax = Math.max(...P, ...Q) * 1.1 || 0.5;
+
+    ctx.strokeStyle = c.border; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, pad.t + plotH);
+    ctx.lineTo(pad.l + plotW, pad.t + plotH); ctx.stroke();
+
+    drawYAxis(ctx, pad, plotW, plotH, 0, yMax, c, 'density');
+    drawXAxis(ctx, pad, plotW, plotH, c, true);
+
+    function drawCurve(arr, stroke, fill){
+      ctx.beginPath();
+      for (let i = 0; i < N; i++){
+        const px = pad.l + (i / (N - 1)) * plotW;
+        const py = pad.t + plotH - (arr[i] / yMax) * plotH;
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.lineTo(pad.l + plotW, pad.t + plotH); ctx.lineTo(pad.l, pad.t + plotH);
+      ctx.closePath(); ctx.fillStyle = fill; ctx.fill();
+      ctx.beginPath();
+      for (let i = 0; i < N; i++){
+        const px = pad.l + (i / (N - 1)) * plotW;
+        const py = pad.t + plotH - (arr[i] / yMax) * plotH;
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.strokeStyle = stroke; ctx.lineWidth = 2; ctx.stroke();
+    }
+    function drawBars(Bd, fill, stroke){
+      const nb = Bd.probs.length;
+      ctx.fillStyle = fill; ctx.strokeStyle = stroke; ctx.lineWidth = 1;
+      for (let b = 0; b < nb; b++){
+        const density = Bd.probs[b] / Bd.w;
+        if (density <= 0) continue;
+        const x0 = xToPx(Bd.edges[b], pad, plotW);
+        const x1 = xToPx(Bd.edges[b+1], pad, plotW);
+        const y0 = pad.t + plotH - (density / yMax) * plotH;
+        ctx.fillRect(x0, y0, x1 - x0, pad.t + plotH - y0);
+        ctx.strokeRect(x0 + 0.5, y0 + 0.5, x1 - x0 - 1, pad.t + plotH - y0 - 0.5);
+      }
+    }
+
+    if (binW > 0){
+      ctx.globalAlpha = 0.35;
+      drawCurve(P, c.p, hexToRgba(c.p, 0.10));
+      drawCurve(Q, c.q, hexToRgba(c.q, 0.10));
+      ctx.globalAlpha = 1;
+      drawBars(Pb, hexToRgba(c.p, 0.45), c.p);
+      drawBars(Qb, hexToRgba(c.q, 0.45), c.q);
+    } else {
+      drawCurve(P, c.p, hexToRgba(c.p, 0.18));
+      drawCurve(Q, c.q, hexToRgba(c.q, 0.18));
+    }
+
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = c.p; ctx.fillRect(pad.l + 8, pad.t + 10, 12, 3);
+    ctx.fillText('P', pad.l + 26, pad.t + 12);
+    ctx.fillStyle = c.q; ctx.fillRect(pad.l + 50, pad.t + 10, 12, 3);
+    ctx.fillText('Q', pad.l + 68, pad.t + 12);
+  }
+
+  // Draw the (non-negative, always finite) JS integrand as one filled curve.
+  function drawIntegrandContinuous(I){
+    const canvas = document.getElementById('plot2');
+    const {ctx, w, h} = setup(canvas);
+    const pad = {l: 50, r: 12, t: 10, b: 24};
+    const plotW = w - pad.l - pad.r, plotH = h - pad.t - pad.b;
+    ctx.clearRect(0, 0, w, h);
+    const c = getColors();
+
+    let fmax = 0;
+    for (let i = 0; i < N; i++) fmax = Math.max(fmax, I[i]);
+    let yMax = fmax * 1.15;
+    if (yMax < 1e-4) yMax = 0.02;
+
+    ctx.strokeStyle = c.border; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, pad.t + plotH);
+    ctx.lineTo(pad.l + plotW, pad.t + plotH); ctx.stroke();
+
+    drawYAxis(ctx, pad, plotW, plotH, 0, yMax, c, 'JS integrand');
+    drawXAxis(ctx, pad, plotW, plotH, c, true);
+
+    const base = pad.t + plotH;
+    function yPx(v){ return base - (Math.max(v, 0) / yMax) * plotH; }
+
+    ctx.beginPath(); ctx.moveTo(pad.l, base);
+    for (let i = 0; i < N; i++){
+      const px = pad.l + (i / (N - 1)) * plotW;
+      ctx.lineTo(px, yPx(I[i]));
+    }
+    ctx.lineTo(pad.l + plotW, base); ctx.closePath();
+    ctx.fillStyle = hexToRgba(c.js, 0.22); ctx.fill();
+
+    ctx.beginPath();
+    for (let i = 0; i < N; i++){
+      const px = pad.l + (i / (N - 1)) * plotW;
+      const py = yPx(I[i]);
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.strokeStyle = c.js; ctx.lineWidth = 1.5; ctx.stroke();
+  }
+
+  function drawIntegrandDiscrete(Pb, contribs){
+    const canvas = document.getElementById('plot2');
+    const {ctx, w, h} = setup(canvas);
+    const pad = {l: 50, r: 12, t: 10, b: 24};
+    const plotW = w - pad.l - pad.r, plotH = h - pad.t - pad.b;
+    ctx.clearRect(0, 0, w, h);
+    const c = getColors();
+
+    let fmax = 0;
+    for (let b = 0; b < contribs.length; b++) fmax = Math.max(fmax, contribs[b]);
+    let yMax = fmax * 1.15;
+    if (yMax < 1e-4) yMax = 0.02;
+
+    ctx.strokeStyle = c.border; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, pad.t + plotH);
+    ctx.lineTo(pad.l + plotW, pad.t + plotH); ctx.stroke();
+
+    drawYAxis(ctx, pad, plotW, plotH, 0, yMax, c, 'JS integrand (binned)');
+    drawXAxis(ctx, pad, plotW, plotH, c, true);
+
+    const base = pad.t + plotH;
+    const nb = contribs.length;
+    for (let b = 0; b < nb; b++){
+      const v = contribs[b];
+      if (v <= 0) continue;
+      const x0 = xToPx(Pb.edges[b], pad, plotW);
+      const x1 = xToPx(Pb.edges[b+1], pad, plotW);
+      const py = base - (v / yMax) * plotH;
+      ctx.fillStyle = hexToRgba(c.js, 0.45);
+      ctx.strokeStyle = c.js; ctx.lineWidth = 1;
+      ctx.fillRect(x0, py, x1 - x0, base - py);
+      ctx.strokeRect(x0 + 0.5, py + 0.5, x1 - x0 - 1, Math.max(base - py - 1, 0));
+    }
+  }
+
+  const ids = ['p-mean','p-std','p-skew','p-trunc','q-mean','q-std','q-skew','q-trunc','bin-w'];
+
+  function readVal(id){
+    const el = document.getElementById(id);
+    const v = parseFloat(el.value);
+    const out = document.getElementById(id + '-out');
+    if (id.endsWith('-trunc')) out.textContent = v >= TRUNC_INF ? '∞' : v.toFixed(1);
+    else if (id === 'bin-w') out.textContent = v <= 0 ? 'off' : v.toFixed(2);
+    else out.textContent = v.toFixed(1);
+    return v;
+  }
+
+  function showJSD(jsd){
+    document.getElementById('jsd').textContent = jsd.toFixed(3) + ' nats';
+    const frac = Math.max(0, Math.min(1, jsd / LN2));
+    document.getElementById('jsd-frac').textContent = (frac * 100).toFixed(1) + '%';
+    document.getElementById('jsd-bar').style.width = (frac * 100).toFixed(1) + '%';
+  }
+
+  function update(){
+    const v = {};
+    ids.forEach(id => { v[id] = readVal(id); });
+    const pTrunc = v['p-trunc'] >= TRUNC_INF ? Infinity : v['p-trunc'];
+    const qTrunc = v['q-trunc'] >= TRUNC_INF ? Infinity : v['q-trunc'];
+    const P = pdfArray(v['p-mean'], v['p-std'], v['p-skew'], pTrunc);
+    const Q = pdfArray(v['q-mean'], v['q-std'], v['q-skew'], qTrunc);
+    const binW = v['bin-w'];
+    if (binW <= 0){
+      const I = jsIntegrand(P, Q);
+      showJSD(jsdFromIntegrand(I));
+      drawTopPlot(P, Q, 0, null, null);
+      drawIntegrandContinuous(I);
+    } else {
+      const Pb = binPdf(P, binW); const Qb = binPdf(Q, binW);
+      const r = discreteJS(Pb, Qb);
+      showJSD(r.jsd);
+      drawTopPlot(P, Q, binW, Pb, Qb);
+      drawIntegrandDiscrete(Pb, r.contribs);
+    }
+  }
+
+  ids.forEach(id => document.getElementById(id).addEventListener('input', update));
+  window.addEventListener('resize', update);
+
+  window.preset = function(name){
+    const presets = {
+      identical:    {pm:0, ps:1,   psk:0, pt:10, qm:0, qs:1,   qsk:0, qt:10, bw:0},
+      shift:        {pm:-1,ps:1,   psk:0, pt:10, qm:2, qs:1,   qsk:0, qt:10, bw:0},
+      wider:        {pm:0, ps:0.6, psk:0, pt:10, qm:0, qs:2.5, qsk:0, qt:10, bw:0},
+      narrower:     {pm:0, ps:2,   psk:0, pt:10, qm:0, qs:0.5, qsk:0, qt:10, bw:0},
+      skewed:       {pm:-1,ps:1.5, psk:6, pt:10, qm:0, qs:1,   qsk:0, qt:10, bw:0},
+      disjoint:     {pm:-3,ps:0.6, psk:0, pt:10, qm:3, qs:0.6, qsk:0, qt:10, bw:0},
+      'q-truncated':{pm:0, ps:1.5, psk:0, pt:10, qm:0, qs:1.5, qsk:0, qt:1.5, bw:0},
+      'coarse-bins':{pm:-1,ps:1,   psk:0, pt:10, qm:1.5,qs:1.2, qsk:0, qt:10, bw:1.0}
+    };
+    const p = presets[name]; if (!p) return;
+    document.getElementById('p-mean').value  = p.pm;
+    document.getElementById('p-std').value   = p.ps;
+    document.getElementById('p-skew').value  = p.psk;
+    document.getElementById('p-trunc').value = p.pt;
+    document.getElementById('q-mean').value  = p.qm;
+    document.getElementById('q-std').value   = p.qs;
+    document.getElementById('q-skew').value  = p.qsk;
+    document.getElementById('q-trunc').value = p.qt;
+    document.getElementById('bin-w').value   = p.bw;
+    update();
+  };
+
+  // Re-render on color-scheme change (light/dark toggle).
+  if (window.matchMedia){
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', update);
+  }
+
+  update();
+})();
+</script>
+</body>
+</html>
