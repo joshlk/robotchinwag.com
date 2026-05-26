@@ -25,7 +25,7 @@ tags:
 math: true
 ---
 
-This is a follow-up to the [interactive KL divergence explorer]({% post_url 2026-05-07-kl-divergence-visualisation %}). That one ended on two rough edges of Kullback–Leibler divergence: it's *asymmetric*, and it blows up to $\infty$ the moment one distribution puts mass where the other has none. Jensen–Shannon divergence is the standard fix for both. Drag the sliders and watch how it behaves.
+This is a follow-up to the [interactive KL divergence explorer]({% post_url 2026-05-07-kl-divergence-visualisation %}). Demostrates how Jensen–Shannon divergence changes with input distributions. Drag the sliders and watch how it behaves.
 
 <iframe src="{{ '/assets/jensen-shannon-explorer.html' | relative_url }}"
         width="100%"

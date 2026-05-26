@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zipf KL divergence explorer</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f5f4ef;
+    --text: #1a1a1a;
+    --text-secondary: #6b6b6b;
+    --border: rgba(0, 0, 0, 0.15);
+    --radius: 8px;
+    --p-color: #185FA5;
+    --q-color: #993C1D;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a1a;
+      --bg-secondary: #262626;
+      --text: #f0f0f0;
+      --text-secondary: #a0a0a0;
+      --border: rgba(255, 255, 255, 0.18);
+      --p-color: #4a9eff;
+      --q-color: #e8825c;
+    }
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 1rem; box-sizing: border-box; }
+  .stat-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 1rem; }
+  .stat { background: var(--bg-secondary); border-radius: var(--radius); padding: 0.75rem 1rem; }
+  .stat-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
+  .stat-value { font-size: 24px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .units-row { text-align: right; font-size: 13px; color: var(--text-secondary); margin: -4px 0 12px; }
+  .units-row select { font-family: inherit; font-size: 13px; color: var(--text); background: var(--bg); border: 0.5px solid var(--border); border-radius: 6px; padding: 1px 4px; }
+  .panes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 560px) { .panes { grid-template-columns: 1fr; } }
+  .pane-title { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+  .p-title { color: var(--p-color); }
+  .q-title { color: var(--q-color); }
+  .plot-wrap { position: relative; }
+  .pane-plot { height: 220px; }
+  .plot-short { height: 150px; }
+  .plot-caption { font-size: 12px; color: var(--text-secondary); margin: 4px 0 14px; text-align: center; }
+  canvas { width: 100%; height: 100%; display: block; }
+  .shared { background: var(--bg-secondary); border-radius: var(--radius); padding: 0.75rem 1rem; margin-bottom: 1rem; }
+  .shared-grid { display: grid; grid-template-columns: 130px 1fr 142px; gap: 10px; align-items: center; font-size: 13px; }
+  .shared-grid label { color: var(--text-secondary); }
+  .shared-grid .out { text-align: right; font-variant-numeric: tabular-nums; }
+  .controls { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 1rem; align-items: start; }
+  .eq-col { display: flex; align-items: center; justify-content: center; padding-top: 28px; }
+  .eq-col button { padding: 4px 12px; font-weight: 600; line-height: 1; }
+  @media (max-width: 560px) { .controls { grid-template-columns: 1fr; } .eq-col { padding-top: 0; } }
+  .control-title { font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+  .slider-grid { display: grid; grid-template-columns: 60px 1fr 110px; gap: 8px; align-items: center; font-size: 13px; }
+  .slider-grid label { color: var(--text-secondary); }
+  .slider-grid .out { text-align: right; font-variant-numeric: tabular-nums; }
+  .slider-grid .out small { color: var(--text-secondary); font-size: 11px; }
+  .presets { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1rem; }
+  button {
+    background: transparent;
+    color: var(--text);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 6px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  button:hover { background: var(--bg-secondary); }
+  input[type="range"] { width: 100%; accent-color: var(--text-secondary); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="stat-row">
+    <div class="stat">
+      <div class="stat-label">KL(P &#8214; Q)</div>
+      <div id="kl-pq" class="stat-value">&mdash;</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">KL(Q &#8214; P)</div>
+      <div id="kl-qp" class="stat-value">&mdash;</div>
+    </div>
+  </div>
+  <div class="units-row"><label>Units <select id="units"><option value="nats" selected>nats</option><option value="bits">bits</option></select></label></div>
+
+  <div class="panes">
+    <div>
+      <div class="pane-title p-title">P</div>
+      <div class="plot-wrap pane-plot"><canvas id="plotP"></canvas></div>
+    </div>
+    <div>
+      <div class="pane-title q-title">Q &mdash; in P&rsquo;s rank order <span style="color:var(--p-color);font-weight:400">(P shown as line)</span></div>
+      <div class="plot-wrap pane-plot"><canvas id="plotQ"></canvas></div>
+    </div>
+  </div>
+  <div class="plot-caption">same axes on both &mdash; token at rank <i>i</i> sits at the same x in each pane
+    &nbsp;&middot;&nbsp;<label style="cursor:pointer"><input type="checkbox" id="logscale" style="vertical-align:middle"> log y-axis</label>
+  </div>
+
+  <div class="plot-wrap plot-short"><canvas id="plotI"></canvas></div>
+  <div class="plot-caption">KL(P &#8214; Q) contribution per rank: p&#7522;&#183;log&#8322;(p&#7522;/q&#7522;) &mdash; sums to KL(P &#8214; Q)</div>
+
+  <div class="shared">
+    <div class="shared-grid">
+      <label>Elements N</label>
+      <input type="range" id="n-log" min="0" max="5" step="0.005" value="1.60206">
+      <span class="out"><span id="n-out">40</span></span>
+    </div>
+    <div class="shared-grid" style="margin-top:8px">
+      <label>Rank corr. &rho;</label>
+      <input type="range" id="rho" min="0" max="1" step="0.01" value="0.9">
+      <span class="out">&rho;&nbsp;=&nbsp;<span id="rho-out">0.90</span> &nbsp;<button id="reshuffle" style="padding:2px 8px;font-size:12px">reshuffle</button></span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div>
+      <div class="control-title p-title">Distribution P</div>
+      <div class="slider-grid">
+        <label>Entropy</label>
+        <input type="range" id="hp" min="0" max="1" step="0.002" value="0.6">
+        <span class="out"><span id="hp-out">2.2</span> <span id="hp-unit">nats</span> <small id="hp-max">/3.7</small></span>
+      </div>
+    </div>
+    <div class="eq-col"><button id="eq-btn" title="Set Q entropy equal to P">=</button></div>
+    <div>
+      <div class="control-title q-title">Distribution Q</div>
+      <div class="slider-grid">
+        <label>Entropy</label>
+        <input type="range" id="hq" min="0" max="1" step="0.002" value="0.6">
+        <span class="out"><span id="hq-out">2.2</span> <span id="hq-unit">nats</span> <small id="hq-max">/3.7</small></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="presets">
+    <button onclick="preset('identical')">Identical</button>
+    <button onclick="preset('temperature')">Temperature</button>
+    <button onclick="preset('reordered')">Reordered only</button>
+    <button onclick="preset('sharpflat')">Sharp vs flat</button>
+    <button onclick="preset('twomodels')">Two models</button>
+    <button onclick="preset('scrambled')">Scrambled</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const N_MIN = 2, N_MAX = 100000;
+  const BAR_MAX = 40;    // N ≤ this → bar charts; above → lines/dots
+  const NBINS = 40;      // integrand bins (curve mode)
+  const LN2 = Math.log(2);
+
+  // ---- cached log(rank) ----
+  let cacheN = -1, lnArr = null;
+  function ensureLn(N){
+    if (N === cacheN) return lnArr;
+    lnArr = new Float64Array(N);
+    for (let i = 0; i < N; i++) lnArr[i] = Math.log(i + 1);
+    cacheN = N;
+    return lnArr;
+  }
+
+  // ---- Zipf math: p_i = i^-s / Z ----
+  function entropyNats(N, s, ln){
+    let Z = 0, sumWln = 0;
+    for (let i = 0; i < N; i++){ const w = Math.exp(-s * ln[i]); Z += w; sumWln += w * ln[i]; }
+    return s * (sumWln / Z) + Math.log(Z);
+  }
+  function solveS(N, targetNats, ln){
+    const maxH = Math.log(N);
+    if (targetNats >= maxH - 1e-9) return 0;
+    if (targetNats <= 1e-9) return 80;
+    let lo = 0, hi = 1;
+    while (entropyNats(N, hi, ln) > targetNats && hi < 200) hi *= 2;
+    for (let it = 0; it < 44; it++){
+      const mid = (lo + hi) / 2;
+      if (entropyNats(N, mid, ln) > targetNats) lo = mid; else hi = mid;
+    }
+    return (lo + hi) / 2;
+  }
+  function computeZ(N, s, ln){ let Z = 0; for (let i = 0; i < N; i++) Z += Math.exp(-s * ln[i]); return Z; }
+
+  // ---- seeded Gaussian noise + permutation (Q-rank for each P-rank) ----
+  function mulberry32(a){
+    return function(){
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  let zCache = {N: -1, seed: -1, z: null};
+  function ensureZ(N, seed){
+    if (zCache.N === N && zCache.seed === seed) return zCache.z;
+    const rnd = mulberry32((seed * 2654435761) ^ (N * 40503) ^ 0x9E3779B9);
+    const z = new Float64Array(N);
+    for (let i = 0; i < N; i++){
+      const u1 = Math.max(rnd(), 1e-12), u2 = rnd();
+      z[i] = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    }
+    zCache = {N, seed, z};
+    return z;
+  }
+  // jitter the LOG-rank: head ranks are widely spaced so they stay put; the
+  // densely-packed tail reshuffles first — like real models that mostly agree
+  // on top tokens and disagree in the tail.
+  function buildPerm(N, tau, z, ln){
+    const keys = new Float64Array(N);
+    for (let i = 0; i < N; i++) keys[i] = ln[i] + tau * z[i];
+    const order = Array.from({length: N}, (_, i) => i);
+    order.sort((a, b) => keys[a] - keys[b]);
+    const qrank = new Int32Array(N);
+    for (let r = 0; r < N; r++) qrank[order[r]] = r + 1;
+    return qrank;
+  }
+  // Spearman rank correlation between P-rank (i+1) and Q-rank (qrank[i]).
+  function spearman(qrank, N){
+    if (N < 2) return 1;
+    let d2 = 0;
+    for (let i = 0; i < N; i++){ const d = (i + 1) - qrank[i]; d2 += d * d; }
+    return 1 - 6 * d2 / (N * (N * N - 1));
+  }
+  // Build a permutation whose Spearman correlation with P ≈ targetRho, by
+  // bisecting the jitter strength τ (ρ decreases monotonically in τ).
+  let permCache = {N: -1, rho: -2, seed: -1, qrank: null};
+  function permForRho(N, targetRho, seed, ln){
+    if (permCache.N === N && permCache.rho === targetRho && permCache.seed === seed) return permCache.qrank;
+    const z = ensureZ(N, seed);
+    let qrank;
+    if (targetRho >= 0.9995){
+      qrank = new Int32Array(N);
+      for (let i = 0; i < N; i++) qrank[i] = i + 1;           // identity
+    } else {
+      let lo = 0, hi = 3 * Math.log(N) + 5;
+      for (let it = 0; it < 20; it++){
+        const mid = (lo + hi) / 2;
+        qrank = buildPerm(N, mid, z, ln);
+        if (spearman(qrank, N) > targetRho) lo = mid; else hi = mid;
+      }
+    }
+    permCache = {N, rho: targetRho, seed, qrank};
+    return qrank;
+  }
+
+  // ---- KL both directions + per-token integrand (bits) ----
+  function computeContrib(N, sP, ZP, sQ, ZQ, qrank, ln){
+    const cArr = new Float64Array(N);
+    let klPQ = 0, klQP = 0;
+    for (let i = 0; i < N; i++){
+      const p = Math.exp(-sP * ln[i]) / ZP;
+      const q = Math.exp(-sQ * ln[qrank[i] - 1]) / ZQ;
+      const lr = Math.log(p / q);
+      cArr[i] = p * lr;
+      klPQ += cArr[i]; klQP += q * (-lr);
+    }
+    return {cArr, klPQ, klQP};
+  }
+
+  // ---- shared canvas helpers ----
+  function getColors(){
+    const cs = getComputedStyle(document.documentElement);
+    return {
+      text: cs.getPropertyValue('--text-secondary').trim() || '#888',
+      border: cs.getPropertyValue('--border').trim() || 'rgba(0,0,0,0.15)',
+      p: cs.getPropertyValue('--p-color').trim() || '#185FA5',
+      q: cs.getPropertyValue('--q-color').trim() || '#993C1D'
+    };
+  }
+  function hexToRgba(hex, a){
+    const h = hex.replace('#','');
+    const r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16);
+    return `rgba(${r},${g},${b},${a})`;
+  }
+  function setup(canvas){
+    const ctx = canvas.getContext('2d');
+    const r = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = r.width * dpr; canvas.height = r.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return {ctx, w: r.width, h: r.height};
+  }
+  function niceStep(range, target){
+    if (range <= 0) return 1;
+    const raw = range / target;
+    const pow = Math.pow(10, Math.floor(Math.log10(raw)));
+    const norm = raw / pow;
+    let step;
+    if (norm < 1.5) step = 1; else if (norm < 3) step = 2;
+    else if (norm < 7) step = 5; else step = 10;
+    return step * pow;
+  }
+  function supr(k){
+    const map = {'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+    return String(k).split('').map(ch => map[ch] || ch).join('');
+  }
+  function fmtInt(n){ return Math.round(n).toLocaleString('en-US'); }
+  function fmtDecade(v){ return v >= 1000 ? (v/1000) + 'k' : String(Math.round(v)); }
+  function fmtLinTick(v){
+    if (Math.abs(v) < 1e-12) return '0';
+    if (v < 0.01) return v.toExponential(0);
+    return v < 0.1 ? v.toFixed(3) : v.toFixed(2);
+  }
+  function fmtKL(b, unit){
+    if (!isFinite(b)) return '∞';
+    if (b > 0 && b < 0.0095) return b.toExponential(1) + ' ' + unit;
+    return b.toFixed(3) + ' ' + unit;
+  }
+
+  // ---- coordinate mappings ----
+  const PAD = {l: 44, r: 10, t: 10, b: 22};
+  function makeX(logX, N, plotW){
+    if (logX){ const lN = Math.log10(N) || 1; return r => PAD.l + (Math.log10(r) / lN) * plotW; }
+    return r => PAD.l + (N > 1 ? (r - 1) / (N - 1) : 0.5) * plotW;
+  }
+  function makeY(logY, yMin, yMax, plotH){
+    if (logY) return prob => PAD.t + plotH - ((Math.log10(prob) - yMin) / (yMax - yMin)) * plotH;
+    return prob => PAD.t + plotH - ((prob - yMin) / (yMax - yMin)) * plotH;
+  }
+  function frame(ctx, plotW, plotH, c){
+    ctx.strokeStyle = c.border; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(PAD.l, PAD.t); ctx.lineTo(PAD.l, PAD.t + plotH);
+    ctx.lineTo(PAD.l + plotW, PAD.t + plotH); ctx.stroke();
+  }
+  function yAxisProb(ctx, plotW, plotH, c, logY, yMin, yMax, Y, title){
+    ctx.font = '10px sans-serif'; ctx.fillStyle = c.text;
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    const ticks = [];
+    if (logY){ for (let k = Math.ceil(yMin); k <= Math.floor(yMax); k++) ticks.push({v: Math.pow(10, k), label: '10' + supr(k)}); }
+    else { const step = niceStep(yMax, 4); for (let v = 0; v <= yMax + 1e-12; v += step) ticks.push({v, label: fmtLinTick(v)}); }
+    for (const t of ticks){
+      const py = Y(t.v);
+      ctx.fillText(t.label, PAD.l - 6, py);
+      ctx.save(); ctx.globalAlpha = 0.4; ctx.strokeStyle = c.border;
+      ctx.beginPath(); ctx.moveTo(PAD.l, py); ctx.lineTo(PAD.l + plotW, py); ctx.stroke(); ctx.restore();
+    }
+    if (title){
+      ctx.save(); ctx.translate(12, PAD.t + plotH / 2); ctx.rotate(-Math.PI / 2);
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = c.text;
+      ctx.fillText(title, 0, 0); ctx.restore();
+    }
+  }
+  function xAxisRank(ctx, plotW, plotH, c, N, logX, X){
+    ctx.font = '10px sans-serif'; ctx.fillStyle = c.text;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    const yb = PAD.t + plotH + 5;
+    const ranks = new Set();
+    if (logX){ const lN = Math.floor(Math.log10(N) + 1e-9); for (let k = 0; k <= lN; k++) ranks.add(Math.pow(10, k)); }
+    else { const step = niceStep(N, 5); ranks.add(1); for (let v = step; v < N - step * 0.5; v += step) ranks.add(Math.round(v)); }
+    ranks.add(N);
+    for (const r of ranks){
+      const px = X(r);
+      ctx.fillText(fmtDecade(r), px, yb);
+      ctx.save(); ctx.globalAlpha = 0.4; ctx.strokeStyle = c.border;
+      ctx.beginPath(); ctx.moveTo(px, PAD.t); ctx.lineTo(px, PAD.t + plotH); ctx.stroke(); ctx.restore();
+    }
+  }
+  function xAxisBars(ctx, plotW, plotH, c, N, slotW){
+    ctx.font = '10px sans-serif'; ctx.fillStyle = c.text;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    const yb = PAD.t + plotH + 5;
+    const every = N <= 12 ? 1 : (N <= 24 ? 2 : 5);
+    for (let r = 1; r <= N; r++){
+      if (r === 1 || r % every === 0 || r === N) ctx.fillText(String(r), PAD.l + (r - 0.5) * slotW, yb);
+    }
+  }
+
+  // ---- P pane ----
+  function drawPaneP(N, sP, ZP, mode, logX, logY, yMin, yMax){
+    const {ctx, w, h} = setup(document.getElementById('plotP'));
+    const plotW = w - PAD.l - PAD.r, plotH = h - PAD.t - PAD.b;
+    ctx.clearRect(0, 0, w, h);
+    const c = getColors();
+    const base = PAD.t + plotH;
+    const Y = makeY(logY, yMin, yMax, plotH);
+    const pAt = r => Math.pow(r, -sP) / ZP;
+    frame(ctx, plotW, plotH, c);
+    yAxisProb(ctx, plotW, plotH, c, logY, yMin, yMax, Y, 'probability');
+
+    if (mode === 'bars'){
+      const slotW = plotW / N, bw = Math.min(slotW * 0.72, 26);
+      xAxisBars(ctx, plotW, plotH, c, N, slotW);
+      ctx.fillStyle = hexToRgba(c.p, 0.5); ctx.strokeStyle = c.p; ctx.lineWidth = 1;
+      for (let r = 1; r <= N; r++){
+        let y0 = Y(pAt(r)); if (y0 < PAD.t) y0 = PAD.t;
+        const x0 = PAD.l + (r - 0.5) * slotW - bw / 2;
+        ctx.fillRect(x0, y0, bw, base - y0);
+        ctx.strokeRect(x0 + 0.5, y0 + 0.5, bw - 1, Math.max(base - y0 - 1, 0));
+      }
+    } else {
+      const X = makeX(logX, N, plotW), lN = Math.log10(N) || 1, M = 300;
+      xAxisRank(ctx, plotW, plotH, c, N, logX, X);
+      ctx.beginPath(); ctx.moveTo(X(1), base);
+      for (let k = 0; k < M; k++){ const r = Math.pow(10, (k / (M - 1)) * lN); ctx.lineTo(X(r), Y(pAt(r))); }
+      ctx.lineTo(X(N), base); ctx.closePath();
+      ctx.fillStyle = hexToRgba(c.p, 0.16); ctx.fill();
+      ctx.beginPath();
+      for (let k = 0; k < M; k++){ const r = Math.pow(10, (k / (M - 1)) * lN); const x = X(r), y = Y(pAt(r)); if (k === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); }
+      ctx.strokeStyle = c.p; ctx.lineWidth = 2.5; ctx.stroke();
+    }
+  }
+
+  // ---- Q pane (Q in P's order) + P overlaid as a line ----
+  function drawPaneQ(N, sQ, ZQ, qrank, sP, ZP, mode, logX, logY, yMin, yMax){
+    const {ctx, w, h} = setup(document.getElementById('plotQ'));
+    const plotW = w - PAD.l - PAD.r, plotH = h - PAD.t - PAD.b;
+    ctx.clearRect(0, 0, w, h);
+    const c = getColors();
+    const base = PAD.t + plotH;
+    const Y = makeY(logY, yMin, yMax, plotH);
+    const qAt = i => Math.pow(qrank[i - 1], -sQ) / ZQ;   // i = P-rank
+    const pAt = r => Math.pow(r, -sP) / ZP;
+    frame(ctx, plotW, plotH, c);
+    yAxisProb(ctx, plotW, plotH, c, logY, yMin, yMax, Y, null);
+
+    if (mode === 'bars'){
+      const slotW = plotW / N, bw = Math.min(slotW * 0.72, 26);
+      xAxisBars(ctx, plotW, plotH, c, N, slotW);
+      // Q bars
+      ctx.fillStyle = hexToRgba(c.q, 0.5); ctx.strokeStyle = c.q; ctx.lineWidth = 1;
+      for (let i = 1; i <= N; i++){
+        let y0 = Y(qAt(i)); if (y0 < PAD.t) y0 = PAD.t;
+        const x0 = PAD.l + (i - 0.5) * slotW - bw / 2;
+        ctx.fillRect(x0, y0, bw, base - y0);
+        ctx.strokeRect(x0 + 0.5, y0 + 0.5, bw - 1, Math.max(base - y0 - 1, 0));
+      }
+      // P line overlay
+      ctx.beginPath();
+      for (let i = 1; i <= N; i++){ const x = PAD.l + (i - 0.5) * slotW, y = Y(pAt(i)); if (i === 1) ctx.moveTo(x, y); else ctx.lineTo(x, y); }
+      ctx.strokeStyle = c.p; ctx.lineWidth = 2; ctx.stroke();
+    } else {
+      const X = makeX(logX, N, plotW), lN = Math.log10(N) || 1, M = 300;
+      xAxisRank(ctx, plotW, plotH, c, N, logX, X);
+      // P line overlay (so Q's scatter can be read against P)
+      ctx.beginPath();
+      for (let k = 0; k < M; k++){ const r = Math.pow(10, (k / (M - 1)) * lN); const x = X(r), y = Y(pAt(r)); if (k === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); }
+      ctx.strokeStyle = hexToRgba(c.p, 0.9); ctx.lineWidth = 2; ctx.stroke();
+      // Q points placed at P-rank x
+      const MP = Math.min(N, 700);
+      ctx.fillStyle = hexToRgba(c.q, 0.6);
+      for (let k = 0; k < MP; k++){
+        let i = Math.round(Math.pow(10, (MP > 1 ? (k / (MP - 1)) : 0) * lN));
+        if (i < 1) i = 1; if (i > N) i = N;
+        ctx.beginPath(); ctx.arc(X(i), Y(qAt(i)), 1.7, 0, 2 * Math.PI); ctx.fill();
+      }
+    }
+  }
+
+  // ---- integrand: contribution per rank (bars when small, smoothed curve otherwise) ----
+  function drawIntegrand(N, cArr, mode, logX, uf, unit){
+    const {ctx, w, h} = setup(document.getElementById('plotI'));
+    const plotW = w - PAD.l - PAD.r, plotH = h - PAD.t - PAD.b;
+    ctx.clearRect(0, 0, w, h);
+    const c = getColors();
+
+    // gather plot values
+    let pts;  // [{x: rank, v: bits}]
+    if (mode === 'bars'){
+      pts = [];
+      for (let i = 0; i < N; i++) pts.push({x: i + 1, v: cArr[i] * uf});
+    } else {
+      const xMaxLog = Math.log10(N) || 1;
+      const sum = new Float64Array(NBINS), cnt = new Int32Array(NBINS), slr = new Float64Array(NBINS);
+      for (let i = 0; i < N; i++){
+        const logr = Math.log10(i + 1);
+        let b = Math.floor((logr / xMaxLog) * NBINS); if (b < 0) b = 0; if (b >= NBINS) b = NBINS - 1;
+        sum[b] += cArr[i] * uf; cnt[b]++; slr[b] += logr;
+      }
+      pts = [];
+      for (let b = 0; b < NBINS; b++) if (cnt[b] > 0) pts.push({x: Math.pow(10, slr[b] / cnt[b]), v: sum[b]});
+    }
+
+    let mx = 0, mn = 0;
+    for (const p of pts){ if (p.v > mx) mx = p.v; if (p.v < mn) mn = p.v; }
+    let yMax = mx * 1.15, yMin = mn * 1.15;
+    if (yMax - yMin < 1e-4){ yMax = 0.01; yMin = -0.01; }
+    const range = yMax - yMin;
+    const X = makeX(logX, N, plotW);
+    const Y = v => PAD.t + plotH - ((v - yMin) / range) * plotH;
+    const zeroY = Y(0);
+
+    frame(ctx, plotW, plotH, c);
+    // y labels (bits)
+    const step = niceStep(range, 4);
+    ctx.font = '10px sans-serif'; ctx.fillStyle = c.text;
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    for (let yv = Math.ceil(yMin / step) * step; yv <= yMax + 1e-12; yv += step){
+      const lbl = Math.abs(yv) < 1e-9 ? '0' : (Math.abs(yv) < 0.01 ? yv.toExponential(0) : yv.toFixed(Math.abs(yv) < 0.1 ? 3 : 2));
+      ctx.fillText(lbl, PAD.l - 6, Y(yv));
+    }
+    ctx.save(); ctx.translate(12, PAD.t + plotH / 2); ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = c.text;
+    ctx.fillText(unit, 0, 0); ctx.restore();
+    // zero line
+    ctx.save(); ctx.strokeStyle = c.border; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+    ctx.beginPath(); ctx.moveTo(PAD.l, zeroY); ctx.lineTo(PAD.l + plotW, zeroY); ctx.stroke(); ctx.restore();
+
+    if (mode === 'bars'){
+      const slotW = plotW / N, bw = Math.min(slotW * 0.72, 26);
+      xAxisBars(ctx, plotW, plotH, c, N, slotW);
+      for (const p of pts){
+        if (p.v === 0) continue;
+        const cx = PAD.l + (p.x - 0.5) * slotW, py = Y(p.v);
+        const top = Math.min(py, zeroY), bh = Math.abs(py - zeroY);
+        ctx.fillStyle = p.v >= 0 ? hexToRgba(c.p, 0.55) : hexToRgba(c.q, 0.55);
+        ctx.fillRect(cx - bw / 2, top, bw, bh);
+      }
+    } else {
+      xAxisRank(ctx, plotW, plotH, c, N, logX, X);
+      if (pts.length){
+        const xl = X(pts[0].x), xr = X(pts[pts.length - 1].x);
+        ctx.beginPath(); ctx.moveTo(xl, zeroY);
+        for (const p of pts) ctx.lineTo(X(p.x), Y(Math.max(p.v, 0)));
+        ctx.lineTo(xr, zeroY); ctx.closePath(); ctx.fillStyle = hexToRgba(c.p, 0.30); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(xl, zeroY);
+        for (const p of pts) ctx.lineTo(X(p.x), Y(Math.min(p.v, 0)));
+        ctx.lineTo(xr, zeroY); ctx.closePath(); ctx.fillStyle = hexToRgba(c.q, 0.30); ctx.fill();
+        ctx.beginPath();
+        pts.forEach((p, idx) => { const x = X(p.x), y = Y(p.v); if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); });
+        ctx.strokeStyle = c.text; ctx.lineWidth = 1.4; ctx.stroke();
+      }
+    }
+  }
+
+  // ---- state + update ----
+  let seed = 1;
+  function currentN(){
+    const t = parseFloat(document.getElementById('n-log').value);
+    return Math.max(N_MIN, Math.min(N_MAX, Math.round(Math.pow(10, t))));
+  }
+  let raf = null;
+  function requestUpdate(){ if (raf) return; raf = requestAnimationFrame(() => { raf = null; update(); }); }
+
+  function update(){
+    const N = currentN();
+    const ln = ensureLn(N);
+    const unit = document.getElementById('units').value;
+    const uf = unit === 'bits' ? 1 / LN2 : 1;        // KL/contributions computed in nats
+    const maxInfo = unit === 'bits' ? Math.log2(N) : Math.log(N);
+    const fracP = parseFloat(document.getElementById('hp').value);
+    const fracQ = parseFloat(document.getElementById('hq').value);
+    const rhoTarget = parseFloat(document.getElementById('rho').value);
+    const logScale = document.getElementById('logscale').checked;
+    const mode = N <= BAR_MAX ? 'bars' : 'curve';
+    const logX = false;        // x-axis (rank) is always linear
+    const logY = logScale;     // toggle controls the y-axis only
+
+    document.getElementById('n-out').textContent = fmtInt(N);
+    document.getElementById('hp-out').textContent = (fracP * maxInfo).toFixed(2);
+    document.getElementById('hq-out').textContent = (fracQ * maxInfo).toFixed(2);
+    document.getElementById('hp-max').textContent = '/' + maxInfo.toFixed(1);
+    document.getElementById('hq-max').textContent = '/' + maxInfo.toFixed(1);
+    document.getElementById('hp-unit').textContent = unit;
+    document.getElementById('hq-unit').textContent = unit;
+
+    const sP = solveS(N, fracP * Math.log(N), ln);
+    const sQ = solveS(N, fracQ * Math.log(N), ln);
+    const ZP = computeZ(N, sP, ln);
+    const ZQ = computeZ(N, sQ, ln);
+    const qrank = permForRho(N, rhoTarget, seed, ln);
+    document.getElementById('rho-out').textContent = spearman(qrank, N).toFixed(2);
+
+    const {cArr, klPQ, klQP} = computeContrib(N, sP, ZP, sQ, ZQ, qrank, ln);
+    document.getElementById('kl-pq').textContent = fmtKL(Math.max(klPQ, 0) * uf, unit);
+    document.getElementById('kl-qp').textContent = fmtKL(Math.max(klQP, 0) * uf, unit);
+
+    // shared y-range over both panes
+    const pHi = Math.max(1 / ZP, 1 / ZQ);
+    const pLo = Math.min(Math.pow(N, -sP) / ZP, Math.pow(N, -sQ) / ZQ);
+    let ylo, yhi;
+    if (logY){
+      yhi = Math.log10(pHi); ylo = Math.log10(pLo);
+      if (yhi - ylo < 1e-6) ylo = yhi - 1;
+      const yr = yhi - ylo; yhi += yr * 0.06; ylo -= yr * 0.06;
+    } else { yhi = pHi * 1.05; ylo = 0; }
+
+    drawPaneP(N, sP, ZP, mode, logX, logY, ylo, yhi);
+    drawPaneQ(N, sQ, ZQ, qrank, sP, ZP, mode, logX, logY, ylo, yhi);
+    drawIntegrand(N, cArr, mode, logX, uf, unit);
+  }
+
+  ['n-log','hp','hq','rho'].forEach(id => document.getElementById(id).addEventListener('input', requestUpdate));
+  document.getElementById('logscale').addEventListener('change', requestUpdate);
+  document.getElementById('units').addEventListener('change', requestUpdate);
+  document.getElementById('eq-btn').addEventListener('click', () => {
+    document.getElementById('hq').value = document.getElementById('hp').value;
+    update();
+  });
+  document.getElementById('reshuffle').addEventListener('click', () => { seed++; update(); });
+  window.addEventListener('resize', requestUpdate);
+  if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', requestUpdate);
+
+  window.preset = function(name){
+    const P = {
+      identical:   {n: 40, hp: 0.60, hq: 0.60, rho: 1.0},
+      temperature: {n: 40, hp: 0.45, hq: 0.75, rho: 1.0},
+      reordered:   {n: 40, hp: 0.60, hq: 0.60, rho: 0.7},
+      sharpflat:   {n: 40, hp: 0.30, hq: 0.85, rho: 1.0},
+      twomodels:   {n: 40, hp: 0.55, hq: 0.62, rho: 0.95},
+      scrambled:   {n: 40, hp: 0.60, hq: 0.60, rho: 0.0}
+    }[name];
+    if (!P) return;
+    document.getElementById('n-log').value = Math.log10(P.n).toFixed(5);
+    document.getElementById('hp').value = P.hp;
+    document.getElementById('hq').value = P.hq;
+    document.getElementById('rho').value = P.rho;
+    update();
+  };
+
+  update();
+})();
+</script>
+</body>
+</html>

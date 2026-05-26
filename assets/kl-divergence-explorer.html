@@ -40,6 +40,8 @@
   .stat { background: var(--bg-secondary); border-radius: var(--radius); padding: 0.75rem 1rem; }
   .stat-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
   .stat-value { font-size: 24px; font-weight: 500; }
+  .units-row { text-align: right; font-size: 13px; color: var(--text-secondary); margin: -4px 0 12px; }
+  .units-row select { font-family: inherit; font-size: 13px; color: var(--text); background: var(--bg); border: 0.5px solid var(--border); border-radius: 6px; padding: 1px 4px; }
   .plot-wrap { position: relative; }
   .plot-tall { height: 280px; }
   .plot-short { height: 140px; margin-bottom: 1.25rem; }
@@ -84,6 +86,7 @@
       <div id="kl-qp" class="stat-value">&mdash;</div>
     </div>
   </div>
+  <div class="units-row"><label>Units <select id="units"><option value="nats" selected>nats</option><option value="bits">bits</option></select></label></div>
 
   <div class="plot-wrap plot-tall"><canvas id="plot"></canvas></div>
   <div class="plot-wrap plot-short"><canvas id="plot2"></canvas></div>
@@ -152,6 +155,7 @@
   const xs = Array.from({length: N}, (_, i) => X_MIN + (X_MAX - X_MIN) * i / (N - 1));
   const dx = (X_MAX - X_MIN) / (N - 1);
   const TRUNC_INF = 9.95;
+  const LN2 = Math.log(2);
 
   function getColors(){
     const cs = getComputedStyle(document.documentElement);
@@ -368,7 +372,7 @@
     ctx.fillText('Q', pad.l + 68, pad.t + 12);
   }
 
-  function drawIntegrandContinuous(P, Q){
+  function drawIntegrandContinuous(P, Q, uf){
     const canvas = document.getElementById('plot2');
     const {ctx, w, h} = setup(canvas);
     const pad = {l: 50, r: 12, t: 8, b: 24};
@@ -377,6 +381,7 @@
     const c = getColors();
 
     const I = continuousIntegrand(P, Q);
+    if (uf !== 1) for (let i = 0; i < N; i++) if (isFinite(I[i])) I[i] *= uf;
     const finiteVals = Array.from(I).filter(v => isFinite(v));
     const fmax = finiteVals.length ? Math.max(...finiteVals) : 0;
     const fmin = finiteVals.length ? Math.min(...finiteVals) : 0;
@@ -449,7 +454,7 @@
     ctx.strokeStyle = c.text; ctx.lineWidth = 1.5; ctx.stroke();
   }
 
-  function drawIntegrandDiscrete(Pb, Qb, contribs){
+  function drawIntegrandDiscrete(Pb, Qb, contribs, uf){
     const canvas = document.getElementById('plot2');
     const {ctx, w, h} = setup(canvas);
     const pad = {l: 50, r: 12, t: 8, b: 24};
@@ -457,6 +462,7 @@
     ctx.clearRect(0, 0, w, h);
     const c = getColors();
 
+    if (uf !== 1){ const cc = new Float64Array(contribs.length); for (let b = 0; b < contribs.length; b++) cc[b] = isFinite(contribs[b]) ? contribs[b] * uf : contribs[b]; contribs = cc; }
     const finiteVals = Array.from(contribs).filter(v => isFinite(v));
     const fmax = finiteVals.length ? Math.max(...finiteVals) : 0;
     const fmin = finiteVals.length ? Math.min(...finiteVals) : 0;
@@ -526,6 +532,8 @@
   function update(){
     const v = {};
     ids.forEach(id => { v[id] = readVal(id); });
+    const unit = document.getElementById('units').value;
+    const uf = unit === 'bits' ? 1 / LN2 : 1;
     const pTrunc = v['p-trunc'] >= TRUNC_INF ? Infinity : v['p-trunc'];
     const qTrunc = v['q-trunc'] >= TRUNC_INF ? Infinity : v['q-trunc'];
     const P = pdfArray(v['p-mean'], v['p-std'], v['p-skew'], pTrunc);
@@ -534,21 +542,22 @@
     if (binW <= 0){
       const klPQ = continuousKL(continuousIntegrand(P, Q));
       const klQP = continuousKL(continuousIntegrand(Q, P));
-      document.getElementById('kl-pq').textContent = isFinite(klPQ) ? klPQ.toFixed(3) + ' nats' : '\u221e';
-      document.getElementById('kl-qp').textContent = isFinite(klQP) ? klQP.toFixed(3) + ' nats' : '\u221e';
+      document.getElementById('kl-pq').textContent = isFinite(klPQ) ? (klPQ * uf).toFixed(3) + ' ' + unit : '\u221e';
+      document.getElementById('kl-qp').textContent = isFinite(klQP) ? (klQP * uf).toFixed(3) + ' ' + unit : '\u221e';
       drawTopPlot(P, Q, 0, null, null);
-      drawIntegrandContinuous(P, Q);
+      drawIntegrandContinuous(P, Q, uf);
     } else {
       const Pb = binPdf(P, binW); const Qb = binPdf(Q, binW);
       const r1 = discreteKL(Pb, Qb); const r2 = discreteKL(Qb, Pb);
-      document.getElementById('kl-pq').textContent = isFinite(r1.kl) ? r1.kl.toFixed(3) + ' nats' : '\u221e';
-      document.getElementById('kl-qp').textContent = isFinite(r2.kl) ? r2.kl.toFixed(3) + ' nats' : '\u221e';
+      document.getElementById('kl-pq').textContent = isFinite(r1.kl) ? (r1.kl * uf).toFixed(3) + ' ' + unit : '\u221e';
+      document.getElementById('kl-qp').textContent = isFinite(r2.kl) ? (r2.kl * uf).toFixed(3) + ' ' + unit : '\u221e';
       drawTopPlot(P, Q, binW, Pb, Qb);
-      drawIntegrandDiscrete(Pb, Qb, r1.contribs);
+      drawIntegrandDiscrete(Pb, Qb, r1.contribs, uf);
     }
   }
 
   ids.forEach(id => document.getElementById(id).addEventListener('input', update));
+  document.getElementById('units').addEventListener('change', update);
   window.addEventListener('resize', update);
 
   window.preset = function(name){

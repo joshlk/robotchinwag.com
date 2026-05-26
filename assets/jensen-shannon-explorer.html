@@ -42,6 +42,8 @@
   .stat { background: var(--bg-secondary); border-radius: var(--radius); padding: 0.75rem 1rem; }
   .stat-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
   .stat-value { font-size: 24px; font-weight: 500; }
+  .units-row { text-align: right; font-size: 13px; color: var(--text-secondary); margin: -2px 0 12px; }
+  .units-row select { font-family: inherit; font-size: 13px; color: var(--text); background: var(--bg); border: 0.5px solid var(--border); border-radius: 6px; padding: 1px 4px; }
   .bar { height: 5px; border-radius: 3px; background: var(--border); margin-top: 8px; overflow: hidden; }
   .bar-fill { height: 100%; background: var(--js-color); width: 0%; transition: width 0.05s linear; }
   .plot-wrap { position: relative; }
@@ -84,11 +86,12 @@
       <div id="jsd" class="stat-value">&mdash;</div>
     </div>
     <div class="stat">
-      <div class="stat-label">fraction of max (ln 2 &asymp; 0.693 nats)</div>
+      <div class="stat-label">fraction of max (1 bit = ln 2 &asymp; 0.693 nats)</div>
       <div id="jsd-frac" class="stat-value">&mdash;</div>
       <div class="bar"><div id="jsd-bar" class="bar-fill"></div></div>
     </div>
   </div>
+  <div class="units-row"><label>Units <select id="units"><option value="nats" selected>nats</option><option value="bits">bits</option></select></label></div>
 
   <div class="plot-wrap plot-tall"><canvas id="plot"></canvas></div>
   <div class="plot-wrap plot-short"><canvas id="plot2"></canvas></div>
@@ -384,7 +387,7 @@
   }
 
   // Draw the (non-negative, always finite) JS integrand as one filled curve.
-  function drawIntegrandContinuous(I){
+  function drawIntegrandContinuous(I, uf){
     const canvas = document.getElementById('plot2');
     const {ctx, w, h} = setup(canvas);
     const pad = {l: 50, r: 12, t: 10, b: 24};
@@ -392,6 +395,7 @@
     ctx.clearRect(0, 0, w, h);
     const c = getColors();
 
+    if (uf !== 1) for (let i = 0; i < N; i++) I[i] *= uf;
     let fmax = 0;
     for (let i = 0; i < N; i++) fmax = Math.max(fmax, I[i]);
     let yMax = fmax * 1.15;
@@ -425,7 +429,7 @@
     ctx.strokeStyle = c.js; ctx.lineWidth = 1.5; ctx.stroke();
   }
 
-  function drawIntegrandDiscrete(Pb, contribs){
+  function drawIntegrandDiscrete(Pb, contribs, uf){
     const canvas = document.getElementById('plot2');
     const {ctx, w, h} = setup(canvas);
     const pad = {l: 50, r: 12, t: 10, b: 24};
@@ -433,6 +437,7 @@
     ctx.clearRect(0, 0, w, h);
     const c = getColors();
 
+    if (uf !== 1){ const cc = new Float64Array(contribs.length); for (let b = 0; b < contribs.length; b++) cc[b] = contribs[b] * uf; contribs = cc; }
     let fmax = 0;
     for (let b = 0; b < contribs.length; b++) fmax = Math.max(fmax, contribs[b]);
     let yMax = fmax * 1.15;
@@ -474,7 +479,9 @@
   }
 
   function showJSD(jsd){
-    document.getElementById('jsd').textContent = jsd.toFixed(3) + ' nats';
+    const unit = document.getElementById('units').value;
+    const uf = unit === 'bits' ? 1 / LN2 : 1;
+    document.getElementById('jsd').textContent = (jsd * uf).toFixed(3) + ' ' + unit;
     const frac = Math.max(0, Math.min(1, jsd / LN2));
     document.getElementById('jsd-frac').textContent = (frac * 100).toFixed(1) + '%';
     document.getElementById('jsd-bar').style.width = (frac * 100).toFixed(1) + '%';
@@ -483,6 +490,7 @@
   function update(){
     const v = {};
     ids.forEach(id => { v[id] = readVal(id); });
+    const uf = document.getElementById('units').value === 'bits' ? 1 / LN2 : 1;
     const pTrunc = v['p-trunc'] >= TRUNC_INF ? Infinity : v['p-trunc'];
     const qTrunc = v['q-trunc'] >= TRUNC_INF ? Infinity : v['q-trunc'];
     const P = pdfArray(v['p-mean'], v['p-std'], v['p-skew'], pTrunc);
@@ -492,17 +500,18 @@
       const I = jsIntegrand(P, Q);
       showJSD(jsdFromIntegrand(I));
       drawTopPlot(P, Q, 0, null, null);
-      drawIntegrandContinuous(I);
+      drawIntegrandContinuous(I, uf);
     } else {
       const Pb = binPdf(P, binW); const Qb = binPdf(Q, binW);
       const r = discreteJS(Pb, Qb);
       showJSD(r.jsd);
       drawTopPlot(P, Q, binW, Pb, Qb);
-      drawIntegrandDiscrete(Pb, r.contribs);
+      drawIntegrandDiscrete(Pb, r.contribs, uf);
     }
   }
 
   ids.forEach(id => document.getElementById(id).addEventListener('input', update));
+  document.getElementById('units').addEventListener('change', update);
   window.addEventListener('resize', update);
 
   window.preset = function(name){
